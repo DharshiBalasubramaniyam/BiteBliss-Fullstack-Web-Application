@@ -26,16 +26,15 @@ public class User {
     private Long id;
 
     @NotBlank
-    @Size(max = 20)
+    @Size(min=3, max = 20)
     private String username;
 
     @NotBlank
-    @Size(max = 50)
     @Email
     private String email;
 
     @NotBlank
-    @Size(max = 120)
+    @Size(min = 8)
     private String password;
 
     @Size(max = 64)
@@ -51,12 +50,13 @@ public class User {
     private Set<Role> roles = new HashSet<>();
 
 
-    public User(String username, String email, String password) {
+    public User(String username, String email, String password, String verificationCode, Date verificationCodeExpiryTime, boolean enabled, Set<Role> roles) {
         this.username = username;
         this.email = email;
         this.password = password;
-        this.verificationCode = null;
-        this.verificationCodeExpiryTime = null;
-        this.enabled = false;
+        this.verificationCode = verificationCode;
+        this.verificationCodeExpiryTime = verificationCodeExpiryTime;
+        this.enabled = enabled;
+        this.roles = roles;
     }
 }
