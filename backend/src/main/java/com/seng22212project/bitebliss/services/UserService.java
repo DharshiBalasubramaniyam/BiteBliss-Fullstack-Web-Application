@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Optional;
 
 @Service
 public interface UserService {
@@ -17,7 +18,7 @@ public interface UserService {
 
     ResponseEntity<String> save(SignUpRequestDto signUpRequestDto) throws MessagingException, UnsupportedEncodingException;
 
-    boolean verifyVerificationCode(String code);
+    ResponseEntity<String> verifyVerificationCode(String code);
 
     User findByEmail(String email);
 
