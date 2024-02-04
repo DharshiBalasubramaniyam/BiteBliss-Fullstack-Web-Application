@@ -1,8 +1,9 @@
 package com.seng22212project.bitebliss.models;
-import com.seng22212project.bitebliss.models.Product;
 
 import jakarta.persistence.*;
 
+@Entity
+@Table(name="Cart_Item")
 public class CartItem {
 
     @Id
@@ -15,7 +16,7 @@ public class CartItem {
     @ManyToOne
     @JoinColumn(name="productId")
     private Product product;
-    private int qunatity;
+    private int quantity;
     private double subTotal;
 
     public long getCartItemId() {
@@ -42,12 +43,12 @@ public class CartItem {
         this.product = product;
     }
 
-    public int getQunatity() {
-        return qunatity;
+    public int getQuantity() {
+        return quantity;
     }
 
-    public void setQunatity(int qunatity) {
-        this.qunatity = qunatity;
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 
     public double getSubTotal() {
