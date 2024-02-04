@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,10 +26,13 @@ public class SignUpController {
 
     @GetMapping("/signup/verify")
     public ResponseEntity<String> verifyUserRegistration(@Param("code") String code) {
-        if (userService.verifyVerificationCode(code)) {
-            return ResponseEntity.ok("User verified successfully!");
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Verification failed: Verification code is invalid or expired!");
+        try {
+            return userService.verifyVerificationCode(code);
+        }catch (UsernameNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Verification failed: " + e.getMessage() + "!");
+        }
+        catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Verification failed: Something went wrong!");
         }
     }
 

@@ -9,13 +9,14 @@ import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.beans.Encoder;
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Component
@@ -34,16 +35,6 @@ public class UserServiceImpl implements UserService{
 
     @Value("${app.verificationCodeExpirationMs}")
     private long EXPIRY_PERIOD;
-
-    @Override
-    public boolean existsByUsername(String username) {
-        return userRepository.existsByUsername(username);
-    }
-
-    @Override
-    public boolean existsByEmail(String email) {
-        return userRepository.existsByEmail(email);
-    }
 
     @Override
     public ResponseEntity<String> save(SignUpRequestDto signUpRequestDto) throws MessagingException, UnsupportedEncodingException {
@@ -73,40 +64,33 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public boolean verifyVerificationCode(String code) {
+    public ResponseEntity<String> verifyVerificationCode(String code) {
         User user = userRepository.findByVerificationCode(code);
 
         if (user == null || user.isEnabled()) {
-            System.out.println("verification failed: Invalid verification code");
-            return false;
+            return ResponseEntity.badRequest().body("verification failed: Invalid verification code");
         }
 
         long currentTimeInMs = System.currentTimeMillis();
         long codeExpiryTimeInMillis = user.getVerificationCodeExpiryTime().getTime();
 
         if (currentTimeInMs > codeExpiryTimeInMillis) {
-            System.out.println("verification failed: Verification code has been expired!");
-            return false;
+            return ResponseEntity.badRequest().body("verification failed: Verification code has been expired!");
         }
 
-        else {
-            user.setVerificationCode(null);
-            user.setVerificationCodeExpiryTime(null);
-            user.setEnabled(true);
-            userRepository.save(user);
-            return true;
-        }
+        user.setVerificationCode(null);
+        user.setVerificationCodeExpiryTime(null);
+        user.setEnabled(true);
+        userRepository.save(user);
+        return ResponseEntity.badRequest().body("verification success!");
     }
 
-    @Override
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
     @Override
     public ResponseEntity<String> resendVerificationCode(String email) throws MessagingException, UnsupportedEncodingException {
         if(!existsByEmail(email)) {
             return ResponseEntity.ok("Cannot send verification code: Email not found!");
         }
+
         User user = findByEmail(email);
 
         user.setVerificationCode(generateVerificationCode());
@@ -118,6 +102,22 @@ public class UserServiceImpl implements UserService{
 
         return ResponseEntity.ok("Verification email has been resent successfully!");
 
+    }
+
+    @Override
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with email: " + email));
     }
 
     private String generateVerificationCode() {
