@@ -1,38 +1,21 @@
-package com.seng22212project.bitebliss.models;
+package com.seng22212project.bitebliss.dtos;
 
+public class ProductDto {
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@Entity
-@Table(name = "Products")
-public class Products {
-    @Id
-    @Column(name="product_id")
-    @GeneratedValue
     private int product_id;
-
-    @Column(name="product_name")
     private String product_name;
-
-    @Column(name="product_price")
     private String price;
-
-    @Column(name="product_description")
     private String description;
-
-    @Column(name="product_image")
     private String imageUrl;
 
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "category_id")
-    private Category category;
+    public ProductDto() {
+        super();
+        this.product_id = product_id;
+        this.product_name = product_name;
+        this.price = price;
+        this.description = description;
+        this.imageUrl = imageUrl;
+    }
 
     public int getProduct_id() {
         return product_id;
@@ -66,8 +49,6 @@ public class Products {
         this.description = description;
     }
 
-
-
     public String getImageUrl() {
         return imageUrl;
     }
@@ -75,9 +56,6 @@ public class Products {
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
-
-
-
-
-
 }
+
+
