@@ -1,13 +1,17 @@
 package com.seng22212project.bitebliss.services;
 
+import com.seng22212project.bitebliss.dtos.ApiResponseDto;
 import com.seng22212project.bitebliss.dtos.SignUpRequestDto;
+import com.seng22212project.bitebliss.exceptions.UserAlreadyExistsException;
+import com.seng22212project.bitebliss.exceptions.UserNotFoundException;
+import com.seng22212project.bitebliss.exceptions.UserServiceLogicException;
+import com.seng22212project.bitebliss.exceptions.UserVerificationFailedException;
 import com.seng22212project.bitebliss.models.User;
 import jakarta.mail.MessagingException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Optional;
 
 @Service
 public interface UserService {
@@ -16,11 +20,11 @@ public interface UserService {
 
     boolean existsByEmail(String Email);
 
-    ResponseEntity<String> save(SignUpRequestDto signUpRequestDto) throws MessagingException, UnsupportedEncodingException;
+    ResponseEntity<ApiResponseDto<?>> save(SignUpRequestDto signUpRequestDto) throws MessagingException, UnsupportedEncodingException, UserAlreadyExistsException, UserServiceLogicException;
 
-    ResponseEntity<String> verifyVerificationCode(String code);
+    ResponseEntity<ApiResponseDto<?>> verifyVerificationCode(String code) throws UserVerificationFailedException;
 
-    User findByEmail(String email);
+    User findByEmail(String email) throws UserNotFoundException;
 
-    ResponseEntity<String> resendVerificationCode(String email) throws MessagingException, UnsupportedEncodingException;
+    ResponseEntity<ApiResponseDto<?>> resendVerificationCode(String email) throws MessagingException, UnsupportedEncodingException, UserNotFoundException, UserServiceLogicException;
 }

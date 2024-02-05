@@ -1,6 +1,12 @@
 package com.seng22212project.bitebliss.services;
 
+import com.seng22212project.bitebliss.dtos.ApiResponseDto;
+import com.seng22212project.bitebliss.dtos.ApiResponseStatus;
 import com.seng22212project.bitebliss.dtos.SignUpRequestDto;
+import com.seng22212project.bitebliss.exceptions.UserAlreadyExistsException;
+import com.seng22212project.bitebliss.exceptions.UserNotFoundException;
+import com.seng22212project.bitebliss.exceptions.UserServiceLogicException;
+import com.seng22212project.bitebliss.exceptions.UserVerificationFailedException;
 import com.seng22212project.bitebliss.factories.RoleFactory;
 import com.seng22212project.bitebliss.models.Role;
 import com.seng22212project.bitebliss.models.User;
@@ -9,14 +15,12 @@ import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 @Component
@@ -37,70 +41,75 @@ public class UserServiceImpl implements UserService{
     private long EXPIRY_PERIOD;
 
     @Override
-    public ResponseEntity<String> save(SignUpRequestDto signUpRequestDto) throws MessagingException, UnsupportedEncodingException {
-
+    public ResponseEntity<ApiResponseDto<?>> save(SignUpRequestDto signUpRequestDto) throws UserAlreadyExistsException, UserServiceLogicException {
         if (existsByUsername(signUpRequestDto.getUserName())) {
-            return ResponseEntity.badRequest().body("Registration Failed: Username is already taken!");
+            throw new UserAlreadyExistsException("Registration Failed: username is already taken!");
         }
         if (existsByEmail(signUpRequestDto.getEmail())) {
-            return ResponseEntity.badRequest().body("Registration Failed: Email is already taken!");
+            throw new UserAlreadyExistsException("Registration Failed: email is already taken!");
         }
 
-        User user = new User(
-                signUpRequestDto.getUserName(),
-                signUpRequestDto.getEmail(),
-                passwordEncoder.encode(signUpRequestDto.getPassword()),
-                generateVerificationCode(),
-                calculateCodeExpirationTime(),
-                false,
-                determineRoles(signUpRequestDto.getRoles())
-        );
+        try {
+            User user = createUser(signUpRequestDto);
 
-        userRepository.save(user);
-        notificationService.sendUserRegistrationVerificationEmail(user);
+            userRepository.save(user);
+            notificationService.sendUserRegistrationVerificationEmail(user);
 
-        return ResponseEntity.ok("Verification email has been sent successfully!");
+            return ResponseEntity
+                    .ok(new ApiResponseDto<>(
+                            ApiResponseStatus.SUCCESS.name(), "", "Verification email has been successfully sent!")
+                    );
+
+        }catch(Exception e) {
+            throw new UserServiceLogicException("Registration failed: Something went wrong!");
+        }
 
     }
 
     @Override
-    public ResponseEntity<String> verifyVerificationCode(String code) {
+    public ResponseEntity<ApiResponseDto<?>> verifyVerificationCode(String code) throws UserVerificationFailedException {
         User user = userRepository.findByVerificationCode(code);
 
         if (user == null || user.isEnabled()) {
-            return ResponseEntity.badRequest().body("verification failed: Invalid verification code");
+            throw new UserVerificationFailedException("Verification failed: invalid verification code!");
         }
 
         long currentTimeInMs = System.currentTimeMillis();
         long codeExpiryTimeInMillis = user.getVerificationCodeExpiryTime().getTime();
 
         if (currentTimeInMs > codeExpiryTimeInMillis) {
-            return ResponseEntity.badRequest().body("verification failed: Verification code has been expired!");
+            throw new UserVerificationFailedException("Verification failed: expired verification code!");
         }
 
         user.setVerificationCode(null);
         user.setVerificationCodeExpiryTime(null);
         user.setEnabled(true);
         userRepository.save(user);
-        return ResponseEntity.badRequest().body("verification success!");
+
+        return ResponseEntity.ok(new ApiResponseDto<>(
+                ApiResponseStatus.SUCCESS.name(), "", "Verification success!")
+        );
     }
 
     @Override
-    public ResponseEntity<String> resendVerificationCode(String email) throws MessagingException, UnsupportedEncodingException {
-        if(!existsByEmail(email)) {
-            return ResponseEntity.ok("Cannot send verification code: Email not found!");
-        }
+    public ResponseEntity<ApiResponseDto<?>> resendVerificationCode(String email) throws MessagingException, UnsupportedEncodingException, UserNotFoundException, UserServiceLogicException {
 
         User user = findByEmail(email);
 
-        user.setVerificationCode(generateVerificationCode());
-        user.setVerificationCodeExpiryTime(calculateCodeExpirationTime());
-        user.setEnabled(false);
+        try {
+            user.setVerificationCode(generateVerificationCode());
+            user.setVerificationCodeExpiryTime(calculateCodeExpirationTime());
+            user.setEnabled(false);
 
-        userRepository.save(user);
-        notificationService.sendUserRegistrationVerificationEmail(user);
+            userRepository.save(user);
+            notificationService.sendUserRegistrationVerificationEmail(user);
 
-        return ResponseEntity.ok("Verification email has been resent successfully!");
+            return ResponseEntity.ok(new ApiResponseDto<>(
+                    ApiResponseStatus.SUCCESS.name(), "", "Verification email has been resent successfully!")
+            );
+        }catch(Exception e) {
+            throw new UserServiceLogicException("Registration failed: Something went wrong!");
+        }
 
     }
 
@@ -115,9 +124,9 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public User findByEmail(String email) {
+    public User findByEmail(String email) throws UserNotFoundException {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("User Not Found with email: " + email));
+                .orElseThrow(() -> new UserNotFoundException("User not found with email " +  email));
     }
 
     private String generateVerificationCode() {
@@ -140,5 +149,17 @@ public class UserServiceImpl implements UserService{
             });
         }
         return roles;
+    }
+
+    private User createUser(SignUpRequestDto signUpRequestDto) {
+        return new User(
+                signUpRequestDto.getUserName(),
+                signUpRequestDto.getEmail(),
+                passwordEncoder.encode(signUpRequestDto.getPassword()),
+                generateVerificationCode(),
+                calculateCodeExpirationTime(),
+                false,
+                determineRoles(signUpRequestDto.getRoles())
+        );
     }
 }

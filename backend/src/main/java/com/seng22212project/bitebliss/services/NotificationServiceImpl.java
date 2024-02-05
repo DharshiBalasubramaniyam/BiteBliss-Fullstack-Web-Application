@@ -23,15 +23,15 @@ public class NotificationServiceImpl implements NotificationService{
     public void sendUserRegistrationVerificationEmail(User user) throws MessagingException, UnsupportedEncodingException {
         String toAddress = user.getEmail();
         String fromAddress = fromMail;
-        String senderName = "Company";
-        String subject = "Please verify your registration";
+        String senderName = "BiteBliss";
+        String subject = "BiteBliss - Please verify your registration";
         String content = "Dear " + user.getUsername() + ",<br><br>"
                 + "<p>Thank you for joining us! We are glad to have you on board.</p><br>"
-                + "<p>To complete the sign up process, enter the verification code in your device.</p><br>"
+                + "<p>To complete the registration process, enter the verification code in your device.</p><br>"
                 + "<p>verification code: <strong>" + user.getVerificationCode() + "</strong></p><br>"
                 + "<p><strong>Please note that the above verification code will be expired within 15 minutes.</strong></p>"
                 + "<br>Thank you,<br>"
-                + "Your company name.";
+                + "BiteBliss.";
 
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
