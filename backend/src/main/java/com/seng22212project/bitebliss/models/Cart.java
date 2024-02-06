@@ -19,6 +19,7 @@ public class Cart {
     @JoinColumn(name = "user_id")
     private User user;
 
+
     public Cart(long cartId, Set<CartItem> items) {
         this.cartId = cartId;
         this.items = items;
@@ -34,5 +35,21 @@ public class Cart {
 
     public void setCartId(long cartId) {
         this.cartId = cartId;
+    }
+
+    public Set<CartItem> getItems() {
+        return items;
+    }
+
+    public void setItems(Set<CartItem> items) {
+        this.items = items;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
