@@ -2,11 +2,16 @@ package com.seng22212project.bitebliss.dtos;
 
 import com.seng22212project.bitebliss.dtos.CartDto;
 import com.seng22212project.bitebliss.models.*;
-import org.apache.catalina.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import com.seng22212project.bitebliss.Exception.ResourceNotFoundException;
 import com.seng22212project.bitebliss.payload.ItemRequest;
 import com.seng22212project.bitebliss.repositories.*;
+import com.seng22212project.bitebliss.Exception.ResourceNotFoundException;
+
+
+import org.apache.catalina.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 public class CartService {
     @Autowired
@@ -31,6 +36,36 @@ public class CartService {
         cartItem.setQuantity(quantity);
         double totalPrice = product.getPrice()*product.getQuantity();
         cartItem.setTotalPrice(totalPrice);
+
+//        getting cart from user
+        Cart cart = user.getCart();
+
+        if(cart == null) {
+            Cart cart1 = new Cart();
+        }
+
+        cartItem.setCart(cart);
+
+        Set<CartItem> items = cart.getItems();
+        AtomicReference<Boolean> flag = new AtomicReference<>();
+        Set<CartItem> newproduct = items.stream().map((i)->{
+            if(i.getProduct().getProduct_id() == product.getProduct_id()){
+                i.setQuantity(quantity);
+                i.setTotalPrice(totalPrice);
+                flag.set(true);
+            }
+            return i;
+        }).collect(Collectors.toSet());
+
+        if(flag.get()){
+            items.clear();
+            items.addAll(newproduct);
+        }else{
+            cartItem.setCart(cart);
+            items.add(cartItem);
+        }
+
+        this.cartRepo.save(null);
 
         return null;
     }
