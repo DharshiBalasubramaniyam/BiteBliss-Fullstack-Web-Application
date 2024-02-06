@@ -17,7 +17,7 @@ public class CartItem {
     @JoinColumn(name="productId")
     private Product product;
     private int quantity;
-    private double subTotal;
+    private double totalPrice;
 
     public long getCartItemId() {
         return cartItemId;
@@ -25,6 +25,22 @@ public class CartItem {
 
     public void setCartItemId(long cartItemId) {
         this.cartItemId = cartItemId;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public double getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(double totalPrice) {
+        this.totalPrice = totalPrice;
     }
 
     public Cart getCart() {
@@ -41,21 +57,5 @@ public class CartItem {
 
     public void setProduct(Product product) {
         this.product = product;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public double getSubTotal() {
-        return subTotal;
-    }
-
-    public void setSubTotal(double subTotal) {
-        this.subTotal = subTotal;
     }
 }
