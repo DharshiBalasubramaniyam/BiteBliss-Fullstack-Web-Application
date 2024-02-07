@@ -1,0 +1,139 @@
+.auth-container {
+    height: 100vh;
+    width: 100%;
+    background-color: rgb(255, 255, 255);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+
+}
+.auth-container::after {
+    content: "";
+    position: absolute;
+    right: 0;bottom: 0;
+    height: 100vh;
+    width: 100%;
+    z-index: 1;
+    clip-path: polygon(100% 0, 0% 100%, 100% 100%);
+    background-color: var(--main);
+}
+.auth-container .auth-wrapper{
+    position: relative;
+    height:600px;
+    width: 100%;
+    max-width: 850px;
+    background-color: rgb(255, 255, 255);
+    z-index: 2;
+    box-shadow: 1px -2px 30px -1px rgba(161, 91, 0, 0.65);
+    display: flex;
+    align-items: stretch;
+    
+}
+.auth-container .auth-wrapper > div {
+    height: 100%;
+    width: 50%;
+    background-image: url('../images/auth/auth.jpg');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: cover;
+}
+
+.auth-container .auth-wrapper form {
+    height: 100%;
+    width: 50%;
+    padding: 0 20px 10px ;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 5px;
+    z-index: 3;
+}
+.auth-container .auth-wrapper form .input-box{
+    width: 100%;
+}
+.auth-container .auth-wrapper form .input-box label {
+    font-size: 14px;
+}
+.auth-container .auth-wrapper form .input-box input, button{
+    margin-top: 5px;
+    padding: 9px 10px;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid rgb(157, 157, 157);
+    font-size: 14px;
+}
+.auth-container .auth-wrapper form .input-box input:focus {
+    border-color: var(--main);
+    outline: 2px solid var(--main);
+}
+.auth-container .auth-wrapper form .auth-link {
+    color: var(--main);
+    cursor: pointer;
+}
+.auth-container .auth-wrapper form .auth-link:hover {
+    
+    text-decoration: underline;
+}
+.auth-container .auth-wrapper form input[type='submit'], button {
+    background-color: var(--main);
+    border: none;
+    font-size: 16px;
+    border: 2px solid var(--main);
+    border-radius: 50px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.3s;
+}
+.auth-container .auth-wrapper form input[type='submit']:hover, button:hover,
+.auth-container .auth-wrapper form input[type='submit'].outline:hover, button.outline:hover{
+    background-color: #ffab3d;
+}
+.auth-container .auth-wrapper form input[type='submit']:active, button:active{
+    scale: 0.98;
+    border-color: black;outline:none;
+}
+.auth-container .auth-wrapper form input[type='submit'].loading, button.loading{
+    pointer-events: none;
+    cursor: not-allowed;
+    opacity: 0.5;
+    color: rgb(104, 104, 104);
+}
+.auth-container .auth-wrapper form input[type='submit'].outline, button.outline{
+    background-color: transparent;
+}
+.auth-container .auth-wrapper form small {
+    color: #ff0000;
+    font-size:13px;
+    
+}
+.auth-container .auth-wrapper form .msg {
+    width: 100%;
+    text-align: center;
+    font-size: 13px;
+}
+.auth-container .auth-wrapper form p {
+    padding: 7px 15px;
+    font-size: 13px;
+    color: #ff0000;
+    background-color: rgb(255, 198, 198);
+    width: 100%;
+    border-radius: 5px;text-align: center;
+}
+
+
+@media all and (max-width: 768px) {
+    .auth-container .auth-wrapper{
+        max-width: 450px;
+        
+    }
+    .auth-container .auth-wrapper > div {
+        width: 0%;
+        display: none;
+    }
+    .auth-container .auth-wrapper form {
+        width: 100%;
+    }
+} 
