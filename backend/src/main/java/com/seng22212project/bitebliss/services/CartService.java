@@ -76,4 +76,10 @@ public class CartService {
 
         return this.modelMapper.map(saveCart,CartDto.class);
     }
+
+    public CartDto getCartItems(String email){
+        User user = (User) this.userRepo.findByEmail(email).orElseThrow(()->new ResourceNotFoundException("User not found"));
+        Cart cart = this.cartRepo.findCartByUser(user).orElseThrow(()->new ResourceNotFoundException("There is no cart"));
+        return this.modelMapper.map(cart,CartDto.class);
+    }
 }
