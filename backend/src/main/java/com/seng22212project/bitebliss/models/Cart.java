@@ -1,6 +1,8 @@
 package com.seng22212project.bitebliss.models;
 
 import jakarta.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,11 +13,21 @@ public class Cart {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long cartId;
-    private long userId;
-    private double total;
+    @OneToMany(mappedBy = "cart",cascade = CascadeType.ALL,orphanRemoval = true)
+    private Set<CartItem> items = new HashSet<>();
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
-    private List<CartItem> cartItems = new ArrayList<>();
+
+    public Cart(long cartId, Set<CartItem> items) {
+        this.cartId = cartId;
+        this.items = items;
+    }
+
+    public Cart() {
+        super();
+    }
 
     public long getCartId() {
         return cartId;
@@ -25,27 +37,19 @@ public class Cart {
         this.cartId = cartId;
     }
 
-    public long getUserId() {
-        return userId;
+    public Set<CartItem> getItems() {
+        return items;
     }
 
-    public void setUserId(long userId) {
-        this.userId = userId;
+    public void setItems(Set<CartItem> items) {
+        this.items = items;
     }
 
-    public double getTotal() {
-        return total;
+    public User getUser() {
+        return user;
     }
 
-    public void setTotal(double total) {
-        this.total = total;
-    }
-
-    public List<CartItem> getCartItems() {
-        return cartItems;
-    }
-
-    public void setCartItems(List<CartItem> cartItems) {
-        this.cartItems = cartItems;
+    public void setUser(User user) {
+        this.user = user;
     }
 }

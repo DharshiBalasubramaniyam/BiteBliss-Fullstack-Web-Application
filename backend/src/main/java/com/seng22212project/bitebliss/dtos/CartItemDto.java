@@ -1,23 +1,14 @@
-package com.seng22212project.bitebliss.models;
+package com.seng22212project.bitebliss.dtos;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Id;
 
-@Entity
-@Table(name="Cart_Item")
-public class CartItem {
-
+public class CartItemDto {
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private long cartItemId;
-    @ManyToOne
-    @JoinColumn(name="cartId")
-    private Cart cart;
-
-    @ManyToOne
-    @JoinColumn(name="productId")
-    private Product product;
     private int quantity;
     private double totalPrice;
+    private CartDto cartDto;
+    private ProductDto productDto;
 
     public long getCartItemId() {
         return cartItemId;
@@ -43,19 +34,19 @@ public class CartItem {
         this.totalPrice = totalPrice;
     }
 
-    public Cart getCart() {
-        return cart;
+    public CartDto getCartDto() {
+        return cartDto;
     }
 
-    public void setCart(Cart cart) {
-        this.cart = cart;
+    public void setCartDto(CartDto cartDto) {
+        this.cartDto = cartDto;
     }
 
-    public Product getProduct() {
-        return product;
+    public ProductDto getProductDto() {
+        return productDto;
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public void setProductDto(ProductDto productDto) {
+        this.productDto = productDto;
     }
 }
