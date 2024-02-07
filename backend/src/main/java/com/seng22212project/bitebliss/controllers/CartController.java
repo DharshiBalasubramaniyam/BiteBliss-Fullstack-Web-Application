@@ -1,4 +1,4 @@
-package com.seng22212project.bitebliss.controller;
+package com.seng22212project.bitebliss.controllers;
 
 import java.security.Principal;
 import org.springframework.beans.factory.annotation.Autowired;
