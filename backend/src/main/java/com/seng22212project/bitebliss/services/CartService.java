@@ -19,6 +19,12 @@ public class CartService {
     @Autowired
     ProductRepository productRepo;
 
+    @Autowired
+    private CartRepository cartRepo;
+
+    @Autowired
+    private ModelMapper modelMapper;
+
     public CartDto addItem(ItemRequest item, String Username) {
         int productId = item.getProductId();
         int quantity = item.getQuantity();
@@ -42,6 +48,7 @@ public class CartService {
 
         if(cart == null) {
             Cart cart1 = new Cart();
+            user.setCart(cart1);
         }
 
         cartItem.setCart(cart);
@@ -65,8 +72,8 @@ public class CartService {
             items.add(cartItem);
         }
 
-        this.cartRepo.save(null);
+        Cart saveCart = this.cartRepo.save(cart);
 
-        return null;
+        return this.modelMapper.map(saveCart,CartDto.class);
     }
 }
