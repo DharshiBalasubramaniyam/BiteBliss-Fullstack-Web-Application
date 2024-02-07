@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.seng22212project.bitebliss.dtos.CartDto;
 import com.seng22212project.bitebliss.payload.ItemRequest;
-import com.seng22212project.bitebliss.services.CartService;
 
 @RestController
 @RequestMapping("/cart")
