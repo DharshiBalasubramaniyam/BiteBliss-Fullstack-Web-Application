@@ -116,6 +116,79 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    public ResponseEntity<ApiResponseDto<?>> verifyEmailAndSendForgotPasswordVerificationEmail(String email) throws UserServiceLogicException, UserNotFoundException {
+        if (existsByEmail(email)) {
+            try {
+                User user = findByEmail(email);
+                user.setVerificationCode(generateVerificationCode());
+                user.setVerificationCodeExpiryTime(calculateCodeExpirationTime());
+                userRepository.save(user);
+
+                notificationService.sendForgotPasswordVerificationEmail(user);
+                return ResponseEntity.ok(new ApiResponseDto<>(
+                        ApiResponseStatus.SUCCESS.name(),
+                        "Verification successful: Email sent successfully!"
+                ));
+            } catch (Exception e) {
+                throw new UserServiceLogicException("Verification failed: Something went wrong!");
+            }
+        }
+
+        throw new UserNotFoundException("Verification failed: User not found with email " + email + "!");
+
+    }
+
+    @Override
+    public ResponseEntity<ApiResponseDto<?>> verifyForgotPasswordVerification(String code) throws UserVerificationFailedException, UserServiceLogicException {
+        User user = userRepository.findByVerificationCode(code);
+
+        if (user == null) {
+            throw new UserVerificationFailedException("Verification failed: invalid verification code!");
+        }
+
+        long currentTimeInMs = System.currentTimeMillis();
+        long codeExpiryTimeInMillis = user.getVerificationCodeExpiryTime().getTime();
+
+        if (currentTimeInMs > codeExpiryTimeInMillis) {
+            throw new UserVerificationFailedException("Verification failed: expired verification code!");
+        }
+
+        try {
+
+            user.setVerificationCode(null);
+            user.setVerificationCodeExpiryTime(null);
+            userRepository.save(user);
+
+            return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseDto<>(
+                    ApiResponseStatus.SUCCESS.name(), "Verification successful: User account has been verified!"
+            ));
+        }catch(Exception e) {
+            throw new UserServiceLogicException("Verification failed: Something went wrong!" + e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseEntity<ApiResponseDto<?>> resetPassword(ResetPasswordDto resetPasswordDto) throws UserNotFoundException, UserServiceLogicException {
+        if (existsByEmail(resetPasswordDto.getEmail())) {
+            try {
+                User user = findByEmail(resetPasswordDto.getEmail());
+                user.setPassword(passwordEncoder.encode(resetPasswordDto.getNewPassword()));
+
+                userRepository.save(user);
+
+                return ResponseEntity.ok(new ApiResponseDto<>(
+                        ApiResponseStatus.SUCCESS.name(),
+                        "Reset successful: Password has been successfully reset!"
+                ));
+            }catch(Exception e) {
+                throw  new UserServiceLogicException("Reset failed: Password cannot be reset!");
+            }
+        }
+
+        throw new UserNotFoundException("User not found with email " + resetPasswordDto.getEmail());
+    }
+
+    @Override
     public boolean existsByUsername(String username) {
         return userRepository.existsByUsername(username);
     }
