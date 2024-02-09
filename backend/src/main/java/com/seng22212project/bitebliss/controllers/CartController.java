@@ -27,4 +27,10 @@ public class CartController {
         CartDto getCartItems = this.cartService.getCartItems(principal.getName());
         return new ResponseEntity<CartDto>(getCartItems, HttpStatus.ACCEPTED);
     }
+
+//    @GetMapping
+//    public ResponseEntity<CartDto> getCartById(@PathVariable long cartId, Principal principal){
+//        CartDto cartById = this.cartService.getCartById(cartId, principal.getName());
+//        return new ResponseEntity<CartDto>(cartById, HttpStatus.OK);
+//    }
 }
