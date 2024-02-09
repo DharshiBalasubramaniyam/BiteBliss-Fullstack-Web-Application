@@ -2,6 +2,7 @@ package com.seng22212project.bitebliss.services;
 
 import com.seng22212project.bitebliss.dtos.ApiResponseDto;
 import com.seng22212project.bitebliss.dtos.ApiResponseStatus;
+import com.seng22212project.bitebliss.dtos.ResetPasswordDto;
 import com.seng22212project.bitebliss.dtos.SignUpRequestDto;
 import com.seng22212project.bitebliss.exceptions.UserAlreadyExistsException;
 import com.seng22212project.bitebliss.exceptions.UserNotFoundException;
@@ -14,6 +15,7 @@ import com.seng22212project.bitebliss.repositories.UserRepository;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -28,6 +30,7 @@ public class UserServiceImpl implements UserService{
 
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private NotificationService notificationService;
 
@@ -55,10 +58,9 @@ public class UserServiceImpl implements UserService{
             userRepository.save(user);
             notificationService.sendUserRegistrationVerificationEmail(user);
 
-            return ResponseEntity
-                    .ok(new ApiResponseDto<>(
-                            ApiResponseStatus.SUCCESS.name(), "", "Verification email has been successfully sent!")
-                    );
+            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponseDto<>(
+                    ApiResponseStatus.SUCCESS.name(), "Verification email has been successfully sent!"
+            ));
 
         }catch(Exception e) {
             throw new UserServiceLogicException("Registration failed: Something went wrong!");
@@ -67,7 +69,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public ResponseEntity<ApiResponseDto<?>> verifyVerificationCode(String code) throws UserVerificationFailedException {
+    public ResponseEntity<ApiResponseDto<?>> verifyRegistrationVerification(String code) throws UserVerificationFailedException {
         User user = userRepository.findByVerificationCode(code);
 
         if (user == null || user.isEnabled()) {
@@ -86,9 +88,9 @@ public class UserServiceImpl implements UserService{
         user.setEnabled(true);
         userRepository.save(user);
 
-        return ResponseEntity.ok(new ApiResponseDto<>(
-                ApiResponseStatus.SUCCESS.name(), "", "Verification success!")
-        );
+        return ResponseEntity.status(HttpStatus.CREATED).body(new ApiResponseDto<>(
+                ApiResponseStatus.SUCCESS.name(),  "Verification successful: User account has been successfully created!"
+        ));
     }
 
     @Override
@@ -104,8 +106,8 @@ public class UserServiceImpl implements UserService{
             userRepository.save(user);
             notificationService.sendUserRegistrationVerificationEmail(user);
 
-            return ResponseEntity.ok(new ApiResponseDto<>(
-                    ApiResponseStatus.SUCCESS.name(), "", "Verification email has been resent successfully!")
+            return ResponseEntity.status(HttpStatus.OK).body(new ApiResponseDto<>(
+                    ApiResponseStatus.SUCCESS.name(), "Verification email has been resent successfully!")
             );
         }catch(Exception e) {
             throw new UserServiceLogicException("Registration failed: Something went wrong!");
