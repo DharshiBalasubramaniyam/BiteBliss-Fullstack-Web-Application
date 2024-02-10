@@ -1,5 +1,7 @@
 package com.seng22212project.bitebliss.dtos;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class ProductDto {
 
     private int product_id;
@@ -7,6 +9,8 @@ public class ProductDto {
     private String price;
     private String description;
     private String imageUrl;
+    private CategoryDto categoryDto;
+
 
     public ProductDto() {
         super();
@@ -15,11 +19,15 @@ public class ProductDto {
         this.price = price;
         this.description = description;
         this.imageUrl = imageUrl;
+        this.categoryDto=categoryDto;
+       
     }
 
     public int getProduct_id() {
         return product_id;
     }
+
+  
 
     public void setProduct_id(int product_id) {
         this.product_id = product_id;
@@ -55,6 +63,15 @@ public class ProductDto {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public CategoryDto getCategoryDto() {
+        return categoryDto;
+    }
+
+    @JsonProperty("category")
+    public void setCategoryDto(CategoryDto categoryDto) {
+        this.categoryDto = categoryDto;
     }
 }
 
