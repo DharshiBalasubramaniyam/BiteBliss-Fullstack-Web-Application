@@ -25,10 +25,10 @@ public class CartService {
     @Autowired
     private ModelMapper modelMapper;
 
-    public CartDto addItem(ItemRequest item, String Username) {
+    public CartDto addItem(ItemRequest item, String email) {
         int productId = item.getProductId();
         int quantity = item.getQuantity();
-        User user = (User) this.userRepo.findByEmail(Username).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user = (User) this.userRepo.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         Product product = this.productRepo.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
 //        Checking the product stock
@@ -76,4 +76,17 @@ public class CartService {
 
         return this.modelMapper.map(saveCart,CartDto.class);
     }
+
+    public CartDto getCartItems(String email){
+        User user = (User) this.userRepo.findByEmail(email).orElseThrow(()->new ResourceNotFoundException("User not found"));
+        Cart cart = this.cartRepo.findCartByUser(user).orElseThrow(()->new ResourceNotFoundException("There is no cart"));
+        return this.modelMapper.map(cart,CartDto.class);
+    }
+
+    //get cart by CartId
+//    public CartDto getCartById(long cartId, String email){
+//        User user = (User) this.userRepo.findByEmail(email).orElseThrow(()->new ResourceNotFoundException("User not found"));
+//        Cart findByUserAndCartId = this.cartRepo.findByUserAndCartId(user,cartId).orElseThrow(()->new ResourceNotFoundException("Cart not found"));
+//        return this.modelMapper.map(findByUserAndCartId,CartDto.class);
+//    }
 }
