@@ -28,7 +28,7 @@ public class CartService {
     public CartDto addItem(ItemRequest item, String email) {
         int productId = item.getProductId();
         int quantity = item.getQuantity();
-        User user = (User) this.userRepo.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user =  this.userRepo.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         Product product = this.productRepo.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
 //        Checking the product stock
@@ -78,15 +78,23 @@ public class CartService {
     }
 
     public CartDto getCartItems(String email){
-        User user = (User) this.userRepo.findByEmail(email).orElseThrow(()->new ResourceNotFoundException("User not found"));
+        User user =  this.userRepo.findByEmail(email).orElseThrow(()->new ResourceNotFoundException("User not found"));
         Cart cart = this.cartRepo.findCartByUser(user).orElseThrow(()->new ResourceNotFoundException("There is no cart"));
         return this.modelMapper.map(cart,CartDto.class);
     }
 
     //get cart by CartId
-//    public CartDto getCartById(long cartId, String email){
-//        User user = (User) this.userRepo.findByEmail(email).orElseThrow(()->new ResourceNotFoundException("User not found"));
-//        Cart findByUserAndCartId = this.cartRepo.findByUserAndCartId(user,cartId).orElseThrow(()->new ResourceNotFoundException("Cart not found"));
+//    public CartDto getCartById(long cartId){
+//        Cart findByUserAndCartId = this.cartRepo.findByUserAndCartId(cartId).orElseThrow(()->new ResourceNotFoundException("Cart not found"));
 //        return this.modelMapper.map(findByUserAndCartId,CartDto.class);
 //    }
+
+    public CartDto removeCartItemFromCart(String email,int ProductId){
+        User user = this.userRepo.findByEmail(email).orElseThrow(()->new ResourceNotFoundException("User not found"));
+        Cart cart = user.getCart();
+        Set<CartItem> items = cart.getItems();
+        boolean removeIf = items.removeIf((i)->i.getProduct().getProduct_id()==ProductId);
+        Cart save = this.cartRepo.save(cart);
+        return this.modelMapper.map(save,CartDto.class);
+    }
 }
