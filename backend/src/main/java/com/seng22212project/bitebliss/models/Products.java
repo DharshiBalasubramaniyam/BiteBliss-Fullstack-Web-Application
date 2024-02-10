@@ -1,6 +1,5 @@
 package com.seng22212project.bitebliss.models;
 
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,6 +27,7 @@ public class Products {
 
     @Column(name="product_image")
     private String imageUrl;
+
 
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -76,7 +76,13 @@ public class Products {
         this.imageUrl = imageUrl;
     }
 
+    public Category getCategory() {
+        return category;
+    }
 
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 
 
 
