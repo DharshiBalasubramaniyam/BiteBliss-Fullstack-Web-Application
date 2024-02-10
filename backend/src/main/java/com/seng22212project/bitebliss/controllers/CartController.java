@@ -28,9 +28,15 @@ public class CartController {
         return new ResponseEntity<CartDto>(getCartItems, HttpStatus.ACCEPTED);
     }
 
-//    @GetMapping
-//    public ResponseEntity<CartDto> getCartById(@PathVariable long cartId, Principal principal){
-//        CartDto cartById = this.cartService.getCartById(cartId, principal.getName());
-//        return new ResponseEntity<CartDto>(cartById, HttpStatus.OK);
-//    }
+//@GetMapping
+//public ResponseEntity<CartDto> getCartById(@PathVariable long cartId){
+//    CartDto cartById = this.cartService.getCartById(cartId);
+//    return new ResponseEntity<CartDto>(cartById, HttpStatus.OK);
+//}
+
+    @DeleteMapping
+    public ResponseEntity<CartDto> deleteCartItemFromCart(@PathVariable int productId,Principal principal){
+        CartDto remove = this.cartService.removeCartItemFromCart(principal.getName() ,productId);
+        return new ResponseEntity<CartDto>(remove, HttpStatus.UPGRADE_REQUIRED);
+    }
 }
