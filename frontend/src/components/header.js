@@ -45,16 +45,14 @@ function Header() {
                 <span><Link to='/'><Logo/></Link></span>
             </div>
             <ul className = {(isNavOpen) ? 'nav-open' : 'nav-close' }>
-                <li><Link to='/' className='nav-link'>Home</Link></li>
+                <li><a href='#hero' className='nav-link'>Home</a></li>
                 <li><Link to='/' className='nav-link'>Shop</Link></li>
-                <li><Link to='/' className='nav-link'>About</Link></li>
                 {!userMode && <li><Link to='/auth/login' className='nav-link'>Login</Link></li> }
                 {/* in future replace this with account dropdown -> Orders, Profile, Log out */}
                 {userMode && <li onClick={logout} className='nav-link'><Link className='nav-link'>Logout</Link></li> } 
             </ul>
             <ul>
                 <li><Link to='/'><i class="fa fa-search" aria-hidden="true"></i></Link></li>
-                <li><Link to='/'><i class="fa fa-heart" aria-hidden="true"></i><span>(0)</span></Link></li>
                 <li><Link to='/'><i class="fa fa-shopping-cart" aria-hidden="true"></i><span>(0)</span></Link></li>
             </ul>
             <AuthVerify logOut={logout}/>

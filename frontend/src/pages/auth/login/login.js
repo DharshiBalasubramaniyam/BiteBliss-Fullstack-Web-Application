@@ -1,9 +1,9 @@
-import '../../assets/styles/auth.css'
+import '../../../assets/styles/auth.css'
 import {useEffect, useState} from 'react';
 import {useForm} from 'react-hook-form';
 import { Link, useNavigate} from 'react-router-dom';
-import Logo from '../../components/logo';
-import AuthService from '../../api-service/authService';
+import Logo from '../../../components/logo';
+import AuthService from '../../../api-service/authService';
 
 function Login() {
     const navigate = useNavigate();
@@ -30,6 +30,7 @@ function Login() {
             },
             (error) => {
                 if (error.response) {
+                    console.log(error.response)
                     const resMessage = error.response.data.message || error.response.data
                     if (resMessage === "Bad credentials"){
                         setResponseError("Incorrect email or password!");
@@ -86,7 +87,7 @@ function Login() {
                         
                         {formState.errors.password && <small>{formState.errors.password.message}</small>}
                     </div>
-                    <div className='msg'> <Link to={'/auth/forgetpassword/verifyEmail'} className='auth-link'>Forgot password?</Link></div>
+                    <div className='msg'> <Link to={'/auth/forgotPassword/verifyEmail'} className='auth-link'>Forgot password?</Link></div>
                     
                     <div className='input-box'>
                         <input type='submit' value={isLoading ? 'Logging in' : 'Login'} className={isLoading ? 'loading' : ''}/>
