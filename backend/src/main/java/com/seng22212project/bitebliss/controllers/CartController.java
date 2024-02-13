@@ -39,4 +39,10 @@ public class CartController {
         CartDto remove = this.cartService.removeCartItemFromCart(principal.getName() ,productId);
         return new ResponseEntity<CartDto>(remove, HttpStatus.UPGRADE_REQUIRED);
     }
+
+    @PutMapping
+    public ResponseEntity<CartDto> updateCartItem(@RequestBody ItemRequest itemRequest, Principal principal) {
+        CartDto updatedItem = this.cartService.updateCartItem(itemRequest, principal.getName());
+        return new ResponseEntity<>(updatedItem, HttpStatus.OK);
+    }
 }
