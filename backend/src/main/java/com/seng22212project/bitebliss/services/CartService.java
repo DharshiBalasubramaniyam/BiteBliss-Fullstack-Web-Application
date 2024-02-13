@@ -5,10 +5,12 @@ import com.seng22212project.bitebliss.models.*;
 import com.seng22212project.bitebliss.payload.ItemRequest;
 import com.seng22212project.bitebliss.repositories.*;
 import com.seng22212project.bitebliss.Exception.ResourceNotFoundException;
+import java.util.Optional;
 
 
 import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
@@ -28,7 +30,7 @@ public class CartService {
     public CartDto addItem(ItemRequest item, String email) {
         int productId = item.getProductId();
         int quantity = item.getQuantity();
-        User user = (User) this.userRepo.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        User user =  this.userRepo.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
         Product product = this.productRepo.findById(productId).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
 //        Checking the product stock
@@ -78,15 +80,59 @@ public class CartService {
     }
 
     public CartDto getCartItems(String email){
-        User user = (User) this.userRepo.findByEmail(email).orElseThrow(()->new ResourceNotFoundException("User not found"));
+        User user =  this.userRepo.findByEmail(email).orElseThrow(()->new ResourceNotFoundException("User not found"));
         Cart cart = this.cartRepo.findCartByUser(user).orElseThrow(()->new ResourceNotFoundException("There is no cart"));
         return this.modelMapper.map(cart,CartDto.class);
     }
 
     //get cart by CartId
-//    public CartDto getCartById(long cartId, String email){
-//        User user = (User) this.userRepo.findByEmail(email).orElseThrow(()->new ResourceNotFoundException("User not found"));
-//        Cart findByUserAndCartId = this.cartRepo.findByUserAndCartId(user,cartId).orElseThrow(()->new ResourceNotFoundException("Cart not found"));
+//    public CartDto getCartById(long cartId){
+//        Cart findByUserAndCartId = this.cartRepo.findByUserAndCartId(cartId).orElseThrow(()->new ResourceNotFoundException("Cart not found"));
 //        return this.modelMapper.map(findByUserAndCartId,CartDto.class);
 //    }
+
+    public CartDto removeCartItemFromCart(String email,int ProductId){
+        User user = this.userRepo.findByEmail(email).orElseThrow(()->new ResourceNotFoundException("User not found"));
+        Cart cart = user.getCart();
+        Set<CartItem> items = cart.getItems();
+        boolean removeIf = items.removeIf((i)->i.getProduct().getProduct_id()==ProductId);
+        Cart save = this.cartRepo.save(cart);
+        return this.modelMapper.map(save,CartDto.class);
+    }
+
+    public CartDto updateCartItem(ItemRequest itemRequest, String email) {
+        int productId = itemRequest.getProductId();
+        int quantity = itemRequest.getQuantity();
+
+        User user = this.userRepo.findByEmail(email).orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        Cart cart = user.getCart();
+
+        if (cart == null) {
+            throw new ResourceNotFoundException("Cart not found");
+        }
+
+        Set<CartItem> items = cart.getItems();
+
+        Optional<CartItem> existingCartItemOptional = items.stream()
+                .filter(cartItem -> cartItem.getProduct().getProduct_id() == productId)
+                .findFirst();
+
+        if (existingCartItemOptional.isPresent()) {
+            CartItem existingCartItem = existingCartItemOptional.get();
+            Product product = existingCartItem.getProduct();
+
+            if (!product.isStock()) {
+                throw new ResourceNotFoundException("Product out of stock");
+            }
+
+            existingCartItem.setQuantity(quantity);
+            double totalPrice = Double.parseDouble(product.getPrice()) * quantity;
+            existingCartItem.setTotalPrice(totalPrice);
+
+            Cart saveCart = this.cartRepo.save(cart);
+            return this.modelMapper.map(saveCart, CartDto.class);
+        } else {
+            throw new ResourceNotFoundException("CartItem not found");
+        }
+    }
 }
