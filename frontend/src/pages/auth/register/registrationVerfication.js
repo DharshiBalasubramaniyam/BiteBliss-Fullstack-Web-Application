@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import {useForm} from 'react-hook-form';
-import Logo from '../../components/logo';
-import AuthService from '../../api-service/authService';
+import Logo from '../../../components/logo';
+import AuthService from '../../../api-service/authService';
 
 function RegistrationVerfication() {
     const navigate = useNavigate();
@@ -20,7 +20,7 @@ function RegistrationVerfication() {
     const onSubmit = async (data) => {
         setIsLoading(true) 
         setResponseError("")       
-        const response = await AuthService.verifyVerificationCode(data.code).then(
+        const response = await AuthService.verifyRegistrationVerificationCode(data.code).then(
             (response) => {
                 console.log(response.data.message);
                 if (response.data.status === 'SUCCESS') {
@@ -32,7 +32,7 @@ function RegistrationVerfication() {
             },
             (error) => {
                 if (error.response) {
-                    const resMessage = error.response.data.error;
+                    const resMessage = error.response.data.response;
                     setResponseError(resMessage);
                     console.log(resMessage);
                 }else {
@@ -47,7 +47,7 @@ function RegistrationVerfication() {
     const resendCode = async() =>{
         setResponseError("")
         setIsSending(true)        
-        const response = await AuthService.resendVerificationCode(email).then(
+        const response = await AuthService.resendRegistrationVerificationCode(email).then(
             (response) => {
                 console.log(response.data);
                 if (response.data.status === "SUCCESS") {
@@ -60,7 +60,7 @@ function RegistrationVerfication() {
             },
             (error) => {
                 if (error.response) {
-                    const resMessage = error.response.data.error;
+                    const resMessage = error.response.data.response;
                     setResponseError(resMessage);
                     console.log(error);
                 }else {

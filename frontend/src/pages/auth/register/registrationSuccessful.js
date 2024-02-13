@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import success from '../../assets/images/icons/success.gif'
-import Logo from "../../components/logo";
+import Logo from "../../../components/logo";
+import success from "../../../assets/images/icons/success.gif"
 
 function RegistrationSuccessful() {
     return(
