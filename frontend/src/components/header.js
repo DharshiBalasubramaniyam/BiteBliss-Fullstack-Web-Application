@@ -102,6 +102,7 @@ function Header() {
         </li>
       </ul>
       <AuthVerify logOut={logout} />
+      {isCartOpen && <Cart onClose={() => setIsCartOpen(false)} />}
     </header>
   );
 }
