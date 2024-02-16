@@ -16,13 +16,13 @@ public class CartController {
     @Autowired
     private CartService cartService;
 
-    @PostMapping("/")
+    @PostMapping("/cart")
     public ResponseEntity<CartDto> addToCart(@RequestBody ItemRequest itemRequest, Principal principal){
         CartDto addItem = this.cartService.addItem(itemRequest,principal.getName());
         return new ResponseEntity<CartDto>(addItem, HttpStatus.OK);
     }
 
-    @GetMapping("/")
+    @GetMapping("/cart")
     public ResponseEntity<CartDto> getAllCartItems(Principal principal){
         CartDto getCartItems = this.cartService.getCartItems(principal.getName());
         return new ResponseEntity<CartDto>(getCartItems, HttpStatus.ACCEPTED);
@@ -34,13 +34,13 @@ public class CartController {
 //    return new ResponseEntity<CartDto>(cartById, HttpStatus.OK);
 //}
 
-    @DeleteMapping
+    @DeleteMapping("/cart/{id}")
     public ResponseEntity<CartDto> deleteCartItemFromCart(@PathVariable int productId,Principal principal){
         CartDto remove = this.cartService.removeCartItemFromCart(principal.getName() ,productId);
         return new ResponseEntity<CartDto>(remove, HttpStatus.UPGRADE_REQUIRED);
     }
 
-    @PutMapping
+    @PutMapping("/cart/{id}")
     public ResponseEntity<CartDto> updateCartItem(@RequestBody ItemRequest itemRequest, Principal principal) {
         CartDto updatedItem = this.cartService.updateCartItem(itemRequest, principal.getName());
         return new ResponseEntity<>(updatedItem, HttpStatus.OK);
