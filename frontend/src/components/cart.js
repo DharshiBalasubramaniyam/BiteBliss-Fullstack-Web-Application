@@ -1,9 +1,50 @@
-import React from "react";
+import React, { useState } from "react";
 import "../assets/styles/cart.css";
 import { AiFillCloseCircle } from "react-icons/ai";
 import { RiDeleteBin6Line } from "react-icons/ri";
 
-const cart = () => {
+const cart = ({ onClose }) => {
+  const [products, setProducts] = useState();
+  const fetchCartItems = async () => {
+    try {
+      const response = await fetch("/cart");
+      const cartData = await response.json();
+      setProducts(cartData.products);
+    } catch (error) {
+      console.error("Error fetching cart items:", error);
+    }
+  };
+
+  const onQuantityChange = async (productId, newQuantity) => {
+    try {
+      const response = await fetch("/cart", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId, quantity: newQuantity }),
+      });
+      if (response.ok) {
+        await fetchCartItems();
+      } else {
+        console.error("Error updating cart:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error updating quantity:", error);
+    }
+  };
+
+  const onProductRemove = async (product) => {
+    try {
+      const response = await fetch("/cart/" + product.id, { method: "DELETE" });
+      if (response.ok) {
+        await fetchCartItems();
+      } else {
+        console.error("Error removing product:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error removing product:", error);
+    }
+  };
+
   return (
     <div className="shoppingCart">
       <div className="header">
