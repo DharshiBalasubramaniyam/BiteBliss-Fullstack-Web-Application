@@ -8,14 +8,9 @@ import Logo from "./logo";
 function Header() {
   const [userMode, setUserMode] = useState(false);
   const [isNavOpen, setIsNavOpen] = useState(false);
-  const [isCartOpen, setIsCartOpen] = useState(false);
 
   const handleNav = () => {
     setIsNavOpen(!isNavOpen);
-  };
-
-  const handleCartToggle = () => {
-    setIsCartOpen(!isCartOpen);
   };
 
   useEffect(() => {
@@ -54,18 +49,13 @@ function Header() {
       </div>
       <ul className={isNavOpen ? "nav-open" : "nav-close"}>
         <li>
-          <Link to="/" className="nav-link">
+          <a href="#hero" className="nav-link">
             Home
-          </Link>
+          </a>
         </li>
         <li>
           <Link to="/" className="nav-link">
             Shop
-          </Link>
-        </li>
-        <li>
-          <Link to="/" className="nav-link">
-            About
           </Link>
         </li>
         {!userMode && (
@@ -90,19 +80,12 @@ function Header() {
         </li>
         <li>
           <Link to="/">
-            <i class="fa fa-heart" aria-hidden="true"></i>
-            <span>(0)</span>
-          </Link>
-        </li>
-        <li>
-          <Link to="/" onClick={handleCartToggle}>
             <i class="fa fa-shopping-cart" aria-hidden="true"></i>
             <span>(0)</span>
           </Link>
         </li>
       </ul>
       <AuthVerify logOut={logout} />
-      {isCartOpen && <Cart onClose={() => setIsCartOpen(false)} />}
     </header>
   );
 }

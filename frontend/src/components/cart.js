@@ -3,6 +3,7 @@ import "../assets/styles/cart.css";
 import { AiFillCloseCircle } from "react-icons/ai";
 import { RiDeleteBin6Line } from "react-icons/ri";
 
+// have to update something in header.js
 const cart = ({ onClose }) => {
   const [products, setProducts] = useState();
   const fetchCartItems = async () => {
