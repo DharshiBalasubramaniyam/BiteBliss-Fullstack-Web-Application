@@ -8,6 +8,7 @@ import com.seng22212project.bitebliss.exceptions.UserServiceLogicException;
 import com.seng22212project.bitebliss.exceptions.UserVerificationFailedException;
 import com.seng22212project.bitebliss.services.UserService;
 import jakarta.mail.MessagingException;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
@@ -23,8 +24,9 @@ import java.io.UnsupportedEncodingException;
 public class SignUpController {
     @Autowired
     private UserService userService;
+
     @PostMapping("/signup")
-    public ResponseEntity<ApiResponseDto<?>> registerUser(@RequestBody SignUpRequestDto signUpRequestDto)
+    public ResponseEntity<ApiResponseDto<?>> registerUser(@RequestBody @Valid SignUpRequestDto signUpRequestDto)
             throws MessagingException, UnsupportedEncodingException, UserAlreadyExistsException, UserServiceLogicException {
         return userService.save(signUpRequestDto);
     }
@@ -32,7 +34,7 @@ public class SignUpController {
     @GetMapping("/signup/verify")
     public ResponseEntity<ApiResponseDto<?>> verifyUserRegistration(@Param("code") String code)
             throws UserVerificationFailedException {
-        return userService.verifyVerificationCode(code);
+        return userService.verifyRegistrationVerification(code);
     }
 
     @GetMapping("/signup/resend")
@@ -40,4 +42,5 @@ public class SignUpController {
             throws UserNotFoundException, MessagingException, UnsupportedEncodingException, UserServiceLogicException {
         return userService.resendVerificationCode(email);
     }
+
 }

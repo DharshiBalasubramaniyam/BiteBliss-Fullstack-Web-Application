@@ -88,5 +88,6 @@ function Header() {
       <AuthVerify logOut={logout} />
     </header>
   );
+
 }
 export default Header;

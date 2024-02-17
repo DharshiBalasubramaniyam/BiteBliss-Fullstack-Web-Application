@@ -1,9 +1,9 @@
-import '../../assets/styles/auth.css'
+import '../../../assets/styles/auth.css'
 import {useEffect, useState, useRef} from 'react';
 import {useForm} from 'react-hook-form';
 import { Link, useNavigate} from 'react-router-dom';
-import Logo from '../../components/logo';
-import AuthService from '../../api-service/authService';
+import AuthService from '../../../api-service/authService';
+import Logo from '../../../components/logo';
 
 
 function Register() {
@@ -31,9 +31,9 @@ function Register() {
             },
             (error) => {
                 if (error.response) {
-                    const resMessage = error.response.data.error
+                    const resMessage = error.response.data.response
                     setResponseError(resMessage);
-                    console.log(error.response);
+                    console.log(error.response.data);
                 }else {
                     setResponseError("Registration failed: Something went wrong!")
                 }
@@ -69,7 +69,7 @@ function Register() {
                                     },
                                     minLength: {
                                         value: 3,
-                                        message: "Username must have atleast 20 characters!"
+                                        message: "Username must have atleast 3 characters!"
                                     }
                                 })}
                             />

@@ -4,6 +4,7 @@ import com.seng22212project.bitebliss.dtos.JwtResponseDto;
 import com.seng22212project.bitebliss.dtos.SignInRequestDto;
 import com.seng22212project.bitebliss.security.UserDetailsImpl;
 import com.seng22212project.bitebliss.security.jwt.JwtUtils;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,7 +29,7 @@ public class SignInController {
     private JwtUtils jwtUtils;
 
     @PostMapping("/signin")
-    public ResponseEntity<?> signIn(@RequestBody  SignInRequestDto signInRequestDto) {
+    public ResponseEntity<?> signIn(@RequestBody @Valid SignInRequestDto signInRequestDto) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(signInRequestDto.getEmail(), signInRequestDto.getPassword()));
 
