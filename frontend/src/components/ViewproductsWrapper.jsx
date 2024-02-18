@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import ViewproductsContent from './ViewproductsContent';
 import 'react-alice-carousel/lib/alice-carousel.css';
-import { loadProduct } from "../services/Product_service";
+import { loadProduct } from "../api-service/Product_service";
 
 const ViewproductsWrapper = () => {
   const [productDetails, setProductDetails] = useState(null);
