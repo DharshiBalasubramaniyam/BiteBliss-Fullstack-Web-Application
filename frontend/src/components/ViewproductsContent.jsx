@@ -31,6 +31,7 @@ const ViewproductsContent = ({ productDetails }) => {
     }
   };
 
+
   const slideNext = (category) => {
     if (carouselRefs.current[category]) {
       carouselRefs.current[category].slideNext();
@@ -69,7 +70,7 @@ const ViewproductsContent = ({ productDetails }) => {
           items={category.products.map((product) => (
             <Viewproducts products={product} key={product.product_id} />
           ))}
-          infinite
+          // infinite
           responsive={responsive}
           disableDotsControls
           disableButtonsControls
@@ -82,6 +83,7 @@ const ViewproductsContent = ({ productDetails }) => {
             <FaChevronLeft />
           </button>
         )}
+
 
         {activeIndexes[category.categoryName] !==
           category.products.length - responsive[currentBreakpoint]?.items && (
