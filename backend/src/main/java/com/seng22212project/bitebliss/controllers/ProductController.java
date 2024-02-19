@@ -15,7 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping("/bitebliss/products")
+@CrossOrigin("*")
 public class ProductController {
 
     @Autowired
