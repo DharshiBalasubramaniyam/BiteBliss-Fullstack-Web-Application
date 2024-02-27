@@ -5,6 +5,7 @@ import com.seng22212project.bitebliss.repositories.*;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.modelmapper.ModelMapper;
+import javax.persistence.EntityNotFoundException;
 
 import jakarta.persistence.*;
 import java.util.MissingResourceException;
@@ -64,7 +65,7 @@ public class OrderServices {
         order.setOrderItem(orderItems);
         order.setOrderAmt(totalOrderPrice.get());
         Order savedOrder;
-        if(Order.getOrderAmt()>0){
+        if(totalOrderPrice.get()>0){
             savedOrder = this.orderRepo.save(order);
             cart.getItems().clear();
             Cart savedCart=this.cartRepo.save(cart);
@@ -80,4 +81,16 @@ public class OrderServices {
         //return this.modelMapper.map(order, OrderDto.class);
 
     }
+    public void cancelOrder(int orderId){
+       Order order= this.orderRepo.findById(orderId).orElseThrow(()->new MissingResourceException("Order not found"));
+        this.orderRepo.delete(order);
+    }
+
+    public OrderDto findById(int orderId){
+        Order order=this.orderRepo.findById(orderId)
+                .orElseThrow(()-> EntityNotFoundException("Order not found"));
+
+        return this.modelMapper.map(order,OrderDto.class);
+    }
+    
 }
