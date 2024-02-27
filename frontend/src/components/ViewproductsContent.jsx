@@ -70,7 +70,7 @@ const ViewproductsContent = ({ productDetails }) => {
           items={category.products.map((product) => (
             <Viewproducts products={product} key={product.product_id} />
           ))}
-          // infinite
+          infinite
           responsive={responsive}
           disableDotsControls
           disableButtonsControls
@@ -86,7 +86,7 @@ const ViewproductsContent = ({ productDetails }) => {
 
 
         {activeIndexes[category.categoryName] !==
-          category.products.length - responsive[currentBreakpoint]?.items && (
+          category.products.length - responsive[currentBreakpoint]?.items  && (
           <button onClick={() => slideNext(category.categoryName)} className='arrow-next'>
             <FaChevronRight />
           </button>
