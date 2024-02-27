@@ -1,6 +1,7 @@
 package com.seng22212project.bitebliss.services;
 import com.seng22212project.bitebliss.dtos.*;
 import com.seng22212project.bitebliss.models.*;
+import com.seng22212project.bitebliss.payload.OrderResponse;
 import com.seng22212project.bitebliss.repositories.*;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,11 @@ import org.modelmapper.ModelMapper;
 import javax.persistence.EntityNotFoundException;
 
 import jakarta.persistence.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import java.awt.print.Pageable;
+import java.util.List;
 import java.util.MissingResourceException;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
@@ -91,6 +97,21 @@ public class OrderServices {
                 .orElseThrow(()-> EntityNotFoundException("Order not found"));
 
         return this.modelMapper.map(order,OrderDto.class);
+    }
+    public OrderResponse findAllOrders(int pageNumber,int pageSize,String sortDir,String sortBy){
+        Pageable pageable=PageRequest.of(pageNumber,pageSize);
+        Page<Order> findAll=this.orderRepo.findAll(pageable);
+        List<Order> content=findAll.getContent();
+
+        List<OrderDto> collect = content.stream().map(each -> this.modelMapper.map(each, OrderDto.class)).collect(Collectors.toList());
+        OrderResponse response = new OrderResponse();
+        response.setContent(collect);
+        response.setPageNumber(findAll.getNumber());
+        response.setLastPage(findAll.isLast());
+        response.setPageSize(findAll.getSize());
+        response.setTotalPage(findAll.getTotalPages());
+        response.setTotalElement(findAll.getTotalElement);
+        return response;
     }
     
 }
