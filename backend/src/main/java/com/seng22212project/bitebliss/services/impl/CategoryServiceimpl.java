@@ -29,10 +29,17 @@ public class CategoryServiceimpl implements CategoryService {
 
     @Override
     public List<CategoryDto> viewAllCategories() {
-        List<Category> findALL = categoryRepository.findAll();
-        List<CategoryDto> findAllDto = findALL.stream().map(category -> this.toDto(category)).collect(Collectors.toList());
+        List<Category> findProductsByCategory = categoryRepository.findAll();
+
+        if (findProductsByCategory.isEmpty()) {
+            throw new CategoryNotFoundException("No category found with name containing: " + findProductsByCategory);
+        }
+
+        List<CategoryDto> findAllDto = findProductsByCategory.stream().map(category -> this.toDto(category)).collect(Collectors.toList());
         return findAllDto;
     }
+
+
 
     @Override
     public CategoryDto viewCategoryById(int cid) {
@@ -49,6 +56,7 @@ public class CategoryServiceimpl implements CategoryService {
         c.setCategory_name(cDto.getCategory_name());
         return c;
     }
+
 
     @Override
     public CategoryDto toDto(Category category) {

@@ -11,7 +11,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/bitebliss/categories")
-@CrossOrigin("*")
 public class CategoryController {
 
     @Autowired
