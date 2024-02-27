@@ -13,11 +13,11 @@ import lombok.NoArgsConstructor;
 public class Products {
     @Id
     @Column(name="product_id")
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int product_id;
 
     @Column(name="product_name")
-    private String product_name;
+    private String productName;
 
     @Column(name="product_price")
     private String price;
@@ -43,11 +43,11 @@ public class Products {
     }
 
     public String getProduct_name() {
-        return product_name;
+        return productName;
     }
 
     public void setProduct_name(String product_name) {
-        this.product_name = product_name;
+        this.productName = product_name;
     }
 
     public String getPrice() {

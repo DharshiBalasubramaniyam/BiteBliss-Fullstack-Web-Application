@@ -14,11 +14,13 @@ public interface ProductService {
 
    public ProductDto viewProductById(int pid);
 
-    public List<ProductDto> getProductByCategory(int cid);
+    public List<ProductDto> getProductByCategory(String categoryName);
 
     public ProductDto updateProduct(int pid, ProductDto updatedProductDto);
 
-   public Products toEntity(ProductDto productDto);
+
+    public List<ProductDto> searchProducts(String searchKey);
+    public Products toEntity(ProductDto productDto);
    public ProductDto toDto(Products products);
 
 

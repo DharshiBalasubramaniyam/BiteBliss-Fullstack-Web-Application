@@ -26,67 +26,88 @@ public class ProductServiceimpl implements ProductService {
 
 
     @Override
-    public ProductDto create(ProductDto productDto,int cid) {
+    public ProductDto create(ProductDto productDto, int cid) {
 
-        Category cat =this.categoryRepository.findById(cid).orElseThrow(()->new CategoryNotFoundException("the category with this category id cannot be found"));
+        Category cat = this.categoryRepository.findById(cid).orElseThrow(() -> new CategoryNotFoundException("the category with this category id cannot be found"));
 
-        Products product=toEntity(productDto);
+        Products product = toEntity(productDto);
         product.setCategory(cat);
-        Products save=this.productRepository.save(product);
-         ProductDto dto=toDto(save);
+        Products save = this.productRepository.save(product);
+        ProductDto dto = toDto(save);
         return dto;
 
-        }
-
+    }
 
 
     @Override
-  public List<ProductDto> viewAllProducts(){
-        List<Products> findALL= productRepository.findAll();
-        List<ProductDto> findAllDto= findALL.stream().map(products -> this.toDto(products)).collect(Collectors.toList());
-      return findAllDto;
-   }
+    public List<ProductDto> viewAllProducts() {
+        List<Products> findALL = productRepository.findAll();
+        List<ProductDto> findAllDto = findALL.stream().map(this::toDto).collect(Collectors.toList());
+        return findAllDto;
+    }
 
     @Override
-    public ProductDto viewProductById(int pid)
-    {
-        Products findById=productRepository.findById(pid).orElseThrow(()->new ProductNotFoundException("product with this product id " +pid+" is not found"));
+    public ProductDto viewProductById(int pid) {
+        Products findById = productRepository.findById(pid).orElseThrow(() -> new ProductNotFoundException("product with this product id " + pid + " is not found"));
         ProductDto productDto = this.toDto(findById);
         return productDto;
     }
 
+
+
     @Override
-    public List<ProductDto> getProductByCategory(int cid) {
-        Category cat=this.categoryRepository.findById(cid).orElseThrow(()->new CategoryNotFoundException("the category with this category id cannot be found"));
-        List<ProductDto> findByCategory=this.productRepository.findByCategory(cat).stream().map(products -> toDto(products)).collect(Collectors.toList());
-        return findByCategory;
+    public List<ProductDto> getProductByCategory(String categoryName) {
+
+        List<Products> productsInCategory = this.productRepository.findByCategory_CategoryNameContaining(categoryName);
+
+//        if (productsInCategory.isEmpty()) {
+//            throw new ProductNotFoundException("No products found for category with name containing: " + categoryName);
+//        }
+
+        return productsInCategory.stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
     }
+
 
     @Override
     public ProductDto updateProduct(int pid, ProductDto updatedProductDto) {
 
-            Products existingProduct = productRepository.findById(pid)
-                    .orElseThrow(() -> new ProductNotFoundException("Product not found with ID: " + pid));
+        Products existingProduct = productRepository.findById(pid)
+                .orElseThrow(() -> new ProductNotFoundException("Product not found with ID: " + pid));
 
 
-            existingProduct.setProduct_name(updatedProductDto.getProduct_name());
-            existingProduct.setPrice(updatedProductDto.getPrice());
-            existingProduct.setDescription(updatedProductDto.getDescription());
-            existingProduct.setImageUrl(updatedProductDto.getImageUrl());
+        existingProduct.setProduct_name(updatedProductDto.getProduct_name());
+        existingProduct.setPrice(updatedProductDto.getPrice());
+        existingProduct.setDescription(updatedProductDto.getDescription());
+        existingProduct.setImageUrl(updatedProductDto.getImageUrl());
+
+        Products updatedProduct = this.productRepository.save(existingProduct);
+
+        return toDto(updatedProduct);
+    }
 
 
+    @Override
+    public List<ProductDto> searchProducts(String partialProductName) {
+        List<Products> productsByName = productRepository.findByProductNameContaining(partialProductName);
 
-            Products updatedProduct =this.productRepository.save(existingProduct);
+//        if (productsByName.isEmpty()) {
+//            throw new ProductNotFoundException("No products found with name containing: " + partialProductName);
+//        }
 
+        List<ProductDto> productDtos = productsByName.stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
 
-            return toDto(updatedProduct);
-        }
+        return productDtos;
+    }
 
 
     //productDto to product
     @Override
     public Products toEntity(ProductDto pDto) {
-        Products p=new Products();
+        Products p = new Products();
         p.setProduct_name(pDto.getProduct_name());
         p.setProduct_id(pDto.getProduct_id());
         p.setDescription(pDto.getDescription());
@@ -98,7 +119,7 @@ public class ProductServiceimpl implements ProductService {
     //product to productDto
     @Override
     public ProductDto toDto(Products products) {
-        ProductDto productDto=new ProductDto();
+        ProductDto productDto = new ProductDto();
 
         productDto.setProduct_id(products.getProduct_id());
         productDto.setProduct_name(products.getProduct_name());
@@ -106,7 +127,7 @@ public class ProductServiceimpl implements ProductService {
         productDto.setPrice(products.getPrice());
         productDto.setImageUrl(products.getImageUrl());
 
-       //change categoty to categoryDto
+        //change category to categoryDto
 
         CategoryDto categoryDto = new CategoryDto();
 
@@ -117,9 +138,5 @@ public class ProductServiceimpl implements ProductService {
         productDto.setCategoryDto(categoryDto);
         return productDto;
     }
-
-
-
-
-
 }
+

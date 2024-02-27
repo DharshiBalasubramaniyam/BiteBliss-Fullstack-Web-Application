@@ -16,13 +16,13 @@ import java.util.List;
 public class Category {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="category_id")
     private int category_id;
 
 
     @Column(name="category_name")
-    private String category_name;
+    private String categoryName;
 
 
     @OneToMany(mappedBy = "category",fetch = FetchType.LAZY,cascade = CascadeType.ALL)
@@ -37,11 +37,11 @@ public class Category {
     }
 
     public String getCategory_name() {
-        return category_name;
+        return categoryName;
     }
 
     public void setCategory_name(String category_name) {
-        this.category_name = category_name;
+        this.categoryName = category_name;
     }
 
     public List<Products> getProducts() {

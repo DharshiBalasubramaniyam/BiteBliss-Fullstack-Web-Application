@@ -11,6 +11,7 @@ public interface CategoryService {
 
     public List<CategoryDto> viewAllCategories();
 
+
     public CategoryDto viewCategoryById(int cid);
 
     public Category toEntity(CategoryDto categoryDto);
