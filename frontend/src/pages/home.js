@@ -1,3 +1,4 @@
+import ViewproductsWrapper from "../components/ViewproductsWrapper";
 import Header from "../components/header";
 import Hero from "../components/hero";
 
@@ -6,6 +7,7 @@ function Home() {
         <>
             <Header/>
             <Hero/>
+            <ViewproductsWrapper/>
         </>        
     )
 }

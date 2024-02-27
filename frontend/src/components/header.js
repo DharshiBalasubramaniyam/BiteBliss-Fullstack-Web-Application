@@ -4,10 +4,12 @@ import { useEffect, useState } from "react";
 import AuthService from "../api-service/authService";
 import AuthVerify from "../api-service/authVerify";
 import Logo from "./logo";
+import useCategories from "../hooks/useCategories";
 
 function Header() {
   const [userMode, setUserMode] = useState(false);
   const [isNavOpen, setIsNavOpen] = useState(false);
+  const [categories] = useCategories();
 
   const handleNav = () => {
     setIsNavOpen(!isNavOpen);
@@ -54,9 +56,20 @@ function Header() {
           </a>
         </li>
         <li>
-          <Link to="/" className="nav-link">
-            Shop
-          </Link>
+          <a href="#menu" className="nav-link">
+            Menu
+          </a>
+          <ul>
+            {
+              categories.map(cat => {
+                return  <li key={cat.category_id}>
+                          <a href={"#" + cat.category_name} className="nav-link">
+                            {cat.category_name}
+                          </a>
+                        </li>
+              })
+            }
+          </ul>
         </li>
         {!userMode && (
           <li>
