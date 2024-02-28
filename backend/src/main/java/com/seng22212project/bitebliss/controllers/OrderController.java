@@ -46,8 +46,8 @@ import com.seng22212project.bitebliss.dtos.ApiResponseDto;
 import com.seng22212project.bitebliss.dtos.ApiResponseStatus;
 import com.seng22212project.bitebliss.dtos.OrderDto;
 import com.seng22212project.bitebliss.dtos.OrderRequest;
+import com.seng22212project.bitebliss.payload.OrderResponse;
 import com.seng22212project.bitebliss.services.OrderServices;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -81,9 +81,16 @@ public class OrderController {
 
         return new ResponseEntity<>(apiResponseDto, HttpStatus.OK);
     }
-    @GetMapping{"/{orderId}"}
+    @GetMapping("/orderId")
     public ResponseEntity<OrderDto> findById(@PathVariable int orderId) {
         OrderDto orderDto = this.orderServices.findById(orderId);
         return new ResponseEntity<>(orderDto, HttpStatus.ACCEPTED);
+    }
+    @GetMapping("/findAll")
+    public OrderResponse findAllOrders(@RequestParam(defaultValue="2",value="pageSize") int pageSize,
+                                       @RequestParam(defaultValue="1",value="pageNumber") int pageNumber)
+    {
+        OrderResponse findAllOrders= this.orderServices.findAllOrders(pageNumber,pageSize);
+        return findAllOrders;
     }
 }
