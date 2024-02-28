@@ -4,6 +4,7 @@ A full stack web application designed to provide users with a platform order foo
 Main features: 
 - User authentication - Sign in, Sign up, Reset password
 - Browse, Search products
+- Product categories
 - Cart management
 - Place orders
 - Checkout(Cash at payment only)
