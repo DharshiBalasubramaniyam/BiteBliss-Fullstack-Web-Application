@@ -25,9 +25,10 @@
     margin: 0 5px;
     cursor: pointer;
     font-size: 15px;
+    position: relative;
 }
 .app-header ul .nav-link {
-    padding: 10px;transition: 0.5s;
+    padding: 10px;transition: 0.2s;
 }
 .app-header ul:last-of-type li {
     padding: 5px;
@@ -50,6 +51,31 @@
     font-size: 23px;
 }
 
+.app-header ul li ul{
+    position: absolute;left: 0;top: 130%;
+    box-shadow: 0 0 10px rgb(188, 188, 188);
+    background-color: white;
+    width: 150px;
+    display: flex;
+    flex-direction: column;transition: opacity 0.5s;
+    opacity: 0;
+    visibility: hidden;
+}
+.app-header ul li ul li{
+    transition: opacity 0.5s;
+    opacity: 0;
+    visibility: hidden;
+    border-bottom: 1px solid rgb(232, 232, 232);
+}
+.app-header ul li ul li:hover {
+    background-color: var(--main);
+}
+.app-header ul li ul li .nav-link:hover{
+    color: black;
+}
+.app-header ul li:hover ul li, .app-header ul li:hover ul{
+    visibility: visible;opacity: 1;
+}
 @media all and (max-width:768px) {
     .fa-times, .fa-bars {
         display: inline-block;
@@ -85,5 +111,8 @@
     .app-header ul:first-of-type .nav-link {
         display: inline-block;
         width: 100%;
+    }
+    .app-header ul li:hover ul li, .app-header ul li:hover ul{
+        display: none;
     }
 }
