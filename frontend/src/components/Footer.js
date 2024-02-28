@@ -21,7 +21,6 @@ function Footer() {
             <div>
                 <h1>Our Menu</h1>
                 <ul>
-                    <li><a href="#">hello</a></li><li><a href="#">hello</a></li><li><a href="#">hello</a></li><li><a href="#">hello</a></li><li><a href="#">hello</a></li><li><a href="#">hello</a></li>
                     {
                         categories.map(cat => {
                             return  <li key={cat.category_id}>
