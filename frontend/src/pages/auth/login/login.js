@@ -14,7 +14,6 @@ function Login() {
     const [isLoading, setIsLoading] = useState(false);
 
     const onSubmit = async (data) => {
-        console.log(data);
         setIsLoading(true)        
         const response = await AuthService.login_req(data.email, data.password).then(
             (response) => {
@@ -29,16 +28,12 @@ function Login() {
 
             },
             (error) => {
-                if (error.response) {
-                    console.log(error.response)
-                    const resMessage = error.response.data.message || error.response.data
-                    if (resMessage === "Bad credentials"){
-                        setResponseError("Incorrect email or password!");
-                    }else {
-                        setResponseError(resMessage);
-                    }
+                const resMessage =(error.response && error.response.data && error.response.data.message) || error.message || error.toString();
+                console.log(resMessage);
+                if (resMessage == "Bad credentials"){
+                    setResponseError("Invalid email or password!");
                 }else {
-                    setResponseError("Login failed: Some thing went wrong!");
+                    setResponseError("Something went wrong: Try again later!");
                 }
             }
           );
