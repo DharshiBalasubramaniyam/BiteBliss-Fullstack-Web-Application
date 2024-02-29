@@ -45,4 +45,31 @@ public class NotificationServiceImpl implements NotificationService{
         javaMailSender.send(message);
     }
 
+    @Override
+    public void sendForgotPasswordVerificationEmail(User user) throws MessagingException, UnsupportedEncodingException {
+        String toAddress = user.getEmail();
+        String fromAddress = fromMail;
+        String senderName = "BiteBliss";
+        String subject = "BiteBliss - Forgot password[Verify your account]";
+        String content = "Dear " + user.getUsername() + ",<br><br>"
+                + "<p>If you have lost your password or wish to reset it, enter the below verification code in your device.</p><br>"
+                + "<p>verification code: <strong>" + user.getVerificationCode() + "</strong></p><br>"
+                + "<p><strong>Please note that the above verification code will be expired within 15 minutes.</strong></p>"
+                + "<p>If you did not request a password reset, you can safely ignore this email. " +
+                "           Only a person with access to your email can reset your account password.</p>"
+                + "<br>Thank you,<br>"
+                + "BiteBliss.";
+
+        MimeMessage message = javaMailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message);
+
+        helper.setFrom(fromAddress, senderName);
+        helper.setTo(toAddress);
+        helper.setSubject(subject);
+
+        helper.setText(content, true);
+
+        javaMailSender.send(message);
+    }
+
 }

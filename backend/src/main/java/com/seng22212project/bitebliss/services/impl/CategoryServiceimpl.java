@@ -1,7 +1,7 @@
 package com.seng22212project.bitebliss.services.impl;
 
-import com.example.demo.Exception.ResourceNotFoundException;
 import com.example.demo.dtos.CategoryDto;
+import com.example.demo.exceptions.CategoryNotFoundException;
 import com.example.demo.models.Category;
 import com.example.demo.repositories.CategoryRepository;
 import com.example.demo.services.CategoryService;
@@ -36,7 +36,7 @@ public class CategoryServiceimpl implements CategoryService {
 
     @Override
     public CategoryDto viewCategoryById(int cid) {
-        Category findById = categoryRepository.findById(cid).orElseThrow(() -> new ResourceNotFoundException("category with this category id " + cid + " is not found"));
+        Category findById = categoryRepository.findById(cid).orElseThrow(() -> new CategoryNotFoundException("category with this category id " + cid + " is not found"));
         CategoryDto categoryDto = this.toDto(findById);
         return categoryDto;
     }
