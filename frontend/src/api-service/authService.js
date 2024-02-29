@@ -75,6 +75,15 @@ const resetPassword = async (email, password) => {
     })
 }
 
+const authHeader = () => {
+    const user = getCurrentUser();
+    if (user && user.token) {
+      return { Authorization: 'Bearer ' + user.token };
+    } else {
+      return {};
+    }
+  }
+
 const AuthService = {
     register_req,
     login_req,
@@ -85,7 +94,8 @@ const AuthService = {
     forgotPasswordVerifyEmail,
     forgotPasswordverifyCode,
     resendResetPasswordVerificationCode,
-    resetPassword
+    resetPassword,
+    authHeader
 }
 
 
