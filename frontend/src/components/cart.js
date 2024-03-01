@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../assets/styles/cart.css";
 import { AiFillCloseCircle } from "react-icons/ai";
 import { RiDeleteBin6Line } from "react-icons/ri";
@@ -6,6 +6,11 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 // have to update something in header.js
 const cart = ({ onClose }) => {
   const [products, setProducts] = useState();
+
+  useEffect(() => {
+    fetchCartItems();
+  }, []);
+
   const fetchCartItems = async () => {
     try {
       const response = await fetch("/cart");
@@ -43,6 +48,23 @@ const cart = ({ onClose }) => {
       }
     } catch (error) {
       console.error("Error removing product:", error);
+    }
+  };
+
+  const onAddToCart = async (productId, quantity) => {
+    try {
+      const response = await fetch("/cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId, quantity }),
+      });
+      if (response.ok) {
+        await fetchCartItems();
+      } else {
+        console.error("Error adding to cart:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Error adding to cart:", error);
     }
   };
 
