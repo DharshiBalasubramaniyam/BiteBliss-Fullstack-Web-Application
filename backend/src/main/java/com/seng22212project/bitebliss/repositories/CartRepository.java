@@ -1,12 +1,9 @@
 package com.seng22212project.bitebliss.repositories;
 
 import com.seng22212project.bitebliss.models.Cart;
+import com.seng22212project.bitebliss.models.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import com.example.demo.models.User;
-
-import java.util.Optional;
 
 public interface CartRepository extends JpaRepository <Cart, Long> {
-    Optional<Cart> findCartByUserId(User user);
-    public  Optional<Cart> findByUserAndCartId(long CartId);
+    Cart findByUser(User user);
 }

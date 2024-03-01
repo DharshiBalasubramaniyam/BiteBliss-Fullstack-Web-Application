@@ -1,48 +1,40 @@
 package com.seng22212project.bitebliss.controllers;
 
-import java.security.Principal;
+import com.seng22212project.bitebliss.dtos.ApiResponseDto;
+import com.seng22212project.bitebliss.exceptions.UserNotFoundException;
+import com.seng22212project.bitebliss.services.CartServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.seng22212project.bitebliss.service.CartService;
 
-import com.seng22212project.bitebliss.dtos.CartDto;
 import com.seng22212project.bitebliss.payload.ItemRequest;
 
 @RestController
-@RequestMapping("/cart")
+@RequestMapping("/bitebliss/user/cart")
+@CrossOrigin(origins = "http://localhost:3000")
 public class CartController {
     @Autowired
-    private CartService cartService;
+    private CartServiceImpl cartService;
 
-    @PostMapping("/cart")
-    public ResponseEntity<CartDto> addToCart(@RequestBody ItemRequest itemRequest, Principal principal){
-        CartDto addItem = this.cartService.addItem(itemRequest,principal.getName());
-        return new ResponseEntity<CartDto>(addItem, HttpStatus.OK);
+    @PostMapping("/new")
+    public ResponseEntity<ApiResponseDto<?>> addToCart(@RequestBody ItemRequest itemRequest, @Param("email") String email) throws UserNotFoundException {
+        return cartService.addItem(itemRequest, email);
     }
 
-    @GetMapping("/cart")
-    public ResponseEntity<CartDto> getAllCartItems(Principal principal){
-        CartDto getCartItems = this.cartService.getCartItems(principal.getName());
-        return new ResponseEntity<CartDto>(getCartItems, HttpStatus.ACCEPTED);
+    @GetMapping("/getCartItems")
+    public ResponseEntity<ApiResponseDto<?>> getAllCartItems(@Param("email") String email) throws UserNotFoundException {
+        return cartService.getCartItems(email);
     }
 
-//@GetMapping
-//public ResponseEntity<CartDto> getCartById(@PathVariable long cartId){
-//    CartDto cartById = this.cartService.getCartById(cartId);
-//    return new ResponseEntity<CartDto>(cartById, HttpStatus.OK);
-//}
-
-    @DeleteMapping("/cart/{id}")
-    public ResponseEntity<CartDto> deleteCartItemFromCart(@PathVariable int productId,Principal principal){
-        CartDto remove = this.cartService.removeCartItemFromCart(principal.getName() ,productId);
-        return new ResponseEntity<CartDto>(remove, HttpStatus.UPGRADE_REQUIRED);
+    @DeleteMapping("/delete")
+    public ResponseEntity<ApiResponseDto<?>> deleteCartItemFromCart(@Param("cartItemId") long cartItemId){
+        return cartService.removeCartItemFromCart(cartItemId);
     }
 
-    @PutMapping("/cart/{id}")
-    public ResponseEntity<CartDto> updateCartItem(@RequestBody ItemRequest itemRequest, Principal principal) {
-        CartDto updatedItem = this.cartService.updateCartItem(itemRequest, principal.getName());
-        return new ResponseEntity<>(updatedItem, HttpStatus.OK);
+    @PutMapping("/update")
+    public ResponseEntity<ApiResponseDto<?>> updateCartItem(@RequestBody ItemRequest itemRequest, @Param("email") String email) throws UserNotFoundException {
+        return cartService.updateCartItemQuantity(itemRequest, email);
     }
+
 }
