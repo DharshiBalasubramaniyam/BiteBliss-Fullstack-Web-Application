@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../assets/styles/cart.css";
 import { AiOutlineClose, AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
 import { RiDeleteBin6Line } from "react-icons/ri";
@@ -6,7 +6,6 @@ import API_BASE_URL from "../api-service/apiConfig";
 import axios from 'axios';
 import AuthService from "../api-service/authService";
 
-// have to update something in header.js
 const Cart = ({ isCartOpen, onClose, setNoOfCartItemsInHeader }) => {
   const [products, setProducts] = useState([]);
   const [isLoading, setLoading] = useState(false);
@@ -100,7 +99,7 @@ const Cart = ({ isCartOpen, onClose, setNoOfCartItemsInHeader }) => {
     }
     setLoading(false)
   };
-
+  
   useEffect(() => {
     fetchCartItems()
   }, []);
