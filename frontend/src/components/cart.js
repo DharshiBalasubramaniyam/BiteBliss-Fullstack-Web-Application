@@ -5,12 +5,15 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import API_BASE_URL from "../api-service/apiConfig";
 import axios from 'axios';
 import AuthService from "../api-service/authService";
+import { Link } from "react-router-dom";
 
 const Cart = ({ isCartOpen, onClose, setNoOfCartItemsInHeader }) => {
   const [products, setProducts] = useState([]);
   const [isLoading, setLoading] = useState(false);
   const [noOfCartItems, setNoOfCartItems] = useState(0);
   const [subtotal, setSubtotal] = useState(0.0);
+
+  console.log(products)
 
   const fetchCartItems = async () => {
     setLoading(true)
@@ -23,12 +26,14 @@ const Cart = ({ isCartOpen, onClose, setNoOfCartItemsInHeader }) => {
           }
         }).then(
           (response) => {
-            console.log(response);
             if (response.data.status === "SUCCESS") {
-              setProducts(response.data.response.cartItemResponse)
-              setNoOfCartItems(response.data.response.noOfCartItems)
-              setNoOfCartItemsInHeader(response.data.response.noOfCartItems)
-              setSubtotal(response.data.response.subtotal)
+              console.log(response.data);
+              if (response.data.response.cartItemResponse) {
+                setProducts(response.data.response.cartItemResponse)
+                setNoOfCartItems(response.data.response.noOfCartItems)
+                setNoOfCartItemsInHeader(response.data.response.noOfCartItems)
+                setSubtotal(response.data.response.subtotal)
+              }
               return
             }
           },
@@ -59,7 +64,7 @@ const Cart = ({ isCartOpen, onClose, setNoOfCartItemsInHeader }) => {
           (response) => {
             console.log(response);
             if (response.data.status === "SUCCESS") {
-              window.location.reload()
+              fetchCartItems()
               return
             }
           },
@@ -86,7 +91,7 @@ const Cart = ({ isCartOpen, onClose, setNoOfCartItemsInHeader }) => {
           (response) => {
             console.log(response);
             if (response.data.status === "SUCCESS") {
-              window.location.reload()
+              fetchCartItems()
               return
             }
           },
@@ -158,7 +163,7 @@ const Cart = ({ isCartOpen, onClose, setNoOfCartItemsInHeader }) => {
         {products.length > 0 && (
           <>
             <h3>Subtotal: Rs. {subtotal}</h3>
-            <button className="btn checkout-btn">Proceed to checkout</button>
+            <Link to='/my/order/checkout'><button className="btn checkout-btn">Proceed to checkout</button></Link>
           </>
         )}
       </div>
