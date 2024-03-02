@@ -11,35 +11,36 @@
 .products .box-container{
     width: 100%;
     display: grid;
-    grid-template-columns: repeat(auto-fit, 230px);
-    grid-gap: 20px;
-    justify-content: space-around;
+    grid-template-columns: repeat(auto-fit, 300px);
+    justify-content: center;
+    height: max-content;
+    place-items: stretch;
 
  
  }
 
  @media all and (max-width:949px) and (min-width:450px){
     .products .box-container{
-        grid-template-columns: repeat(auto-fit, 270px);
+        grid-template-columns: repeat(auto-fit, 300px);
     }
 
  }
 
  @media all and (max-width:370px){
     .products .box-container{
-    grid-template-columns: repeat(auto-fit, 210px);
+    grid-template-columns: repeat(auto-fit, 250px);
  }
 }
 
  
-.products .box-container .box {
+.box-container .box {
     position: relative;
     box-shadow: 0 0 20px var(--grey);
     display: flex;
     flex-direction: column;
     padding: 10px;
     align-items: center;
-    justify-content: space-between;
+    gap: 10px;
     transition: 0.3s;cursor: pointer;
     border: solid 2px black;
 }
@@ -66,10 +67,12 @@
   
  .products .box-container .box .description{
     padding-top: 0.5rem;
-    font-size: 10px;
+    font-size: 14px;
     text-align: center;
+    max-height: calc(1.2em * 4);
     height: 70px;
-    
+    overflow: hidden;
+    text-overflow: ellipsis;    
  }  
 
  .products .box-container .box .price{
@@ -86,17 +89,15 @@
 
  .products .box-container .box .text-part{
     width: 100%;
-    background-color: white;
     transition: transform .3s ease-out;
  }
 
  .products .box-container .box:hover .text-part{
-    transform: translateY(-1rem);
+    /* transform: translateY(-1rem); */
  }
 
 .products .box-container .box button{
     width: 100%;
-    margin-top: 7px;
     font-size: 17px;
     padding: 9px 0;
     display: flex;
@@ -105,22 +106,22 @@
     gap: 10px;
     transition: 0.3s;cursor: pointer;
     background-color: var(--main);
+    border: 2px solid var(--main);
     color: black;
-    border: none;
 }
-.products .box-container .box button:hover {
+.products .box-container .box button:hover, button:hover {
    background-color: black;
-   color: white;
+   color: white;border: 2px solid black;
 }
 
 .arrow-next,.arrow-prev{
-    z-index: 1000; 
+    z-index: 1; 
     height: 2.5rem;
     width: 2.5rem;
     border-radius: 8px;
     background: black;
     color: white;
-    font-size: 2rem;
+    font-size: 1rem;
     transition: 0.3s;
     cursor: pointer;
   
