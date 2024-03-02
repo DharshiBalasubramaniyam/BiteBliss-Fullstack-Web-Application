@@ -69,7 +69,7 @@ const CheckoutForm = () => {
    console.log('Form submitted successfully:', { fname, lname, address1, address2, city, district, phone });
    try {
     //need to update url
-    const response = await axios.post('http://bitebliss-fullstack-web-application/Order', {
+    const response = await axios.post('http://localhost:8080/api/order', {
       fname,
       lname,
       address1,
