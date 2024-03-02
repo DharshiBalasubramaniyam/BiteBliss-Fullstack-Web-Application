@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../assets/styles/cart.css";
 import { AiOutlineClose, AiOutlinePlus, AiOutlineMinus } from "react-icons/ai";
 import { RiDeleteBin6Line } from "react-icons/ri";
@@ -104,7 +104,7 @@ const Cart = ({ isCartOpen, onClose, setNoOfCartItemsInHeader }) => {
     }
     setLoading(false)
   };
-
+  
   useEffect(() => {
     fetchCartItems()
   }, []);
