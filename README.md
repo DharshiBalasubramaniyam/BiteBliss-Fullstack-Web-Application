@@ -8,6 +8,6 @@ Main features:
 - Cart management
 - Place orders
 - Checkout(Cash at payment only)
-- User profile
+- User profile, view order history
   
 Technologies: Spring boot | React js | JWT | MySQL | CSS
