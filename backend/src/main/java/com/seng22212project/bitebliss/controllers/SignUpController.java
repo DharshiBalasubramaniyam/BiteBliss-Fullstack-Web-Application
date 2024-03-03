@@ -1,7 +1,7 @@
 package com.seng22212project.bitebliss.controllers;
 
-import com.seng22212project.bitebliss.dtos.ApiResponseDto;
-import com.seng22212project.bitebliss.dtos.SignUpRequestDto;
+import com.seng22212project.bitebliss.dtos.responses.ApiResponseDto;
+import com.seng22212project.bitebliss.dtos.requests.SignUpRequestDto;
 import com.seng22212project.bitebliss.exceptions.UserAlreadyExistsException;
 import com.seng22212project.bitebliss.exceptions.UserNotFoundException;
 import com.seng22212project.bitebliss.exceptions.UserServiceLogicException;
@@ -11,9 +11,7 @@ import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;

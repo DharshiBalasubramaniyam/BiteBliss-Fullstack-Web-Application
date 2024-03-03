@@ -1,8 +1,7 @@
-import Footer from "../components/footer";
 import ViewproductsWrapper from "../components/ViewproductsWrapper";
+import Footer from "../components/footer";
 import Header from "../components/header";
 import Hero from "../components/hero";
-import CopyRight from "../components/copyright";
 
 function Home() {
     return (
@@ -11,7 +10,6 @@ function Home() {
             <Hero/>
             <ViewproductsWrapper/>
             <Footer/>
-            <CopyRight/>
         </>        
     )
 }

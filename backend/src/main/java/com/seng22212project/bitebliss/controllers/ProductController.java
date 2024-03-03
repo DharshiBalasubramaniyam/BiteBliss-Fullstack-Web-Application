@@ -1,10 +1,9 @@
 package com.seng22212project.bitebliss.controllers;
 
-import com.example.demo.dtos.ProductDto;
-import com.example.demo.exceptions.ProductNotFoundException;
-import com.example.demo.services.CategoryService;
-import com.example.demo.services.ProductService;
-import com.example.demo.services.fileUpload;
+import com.seng22212project.bitebliss.dtos.responses.ProductDto;
+import com.seng22212project.bitebliss.services.CategoryService;
+import com.seng22212project.bitebliss.services.ProductService;
+import com.seng22212project.bitebliss.services.fileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -67,7 +66,6 @@ public class ProductController {
     public ResponseEntity<List<ProductDto>> viewAllProducts() {
         List<ProductDto> viewAll = productService.viewAllProducts();
         return new ResponseEntity<List<ProductDto>>(viewAll, HttpStatus.ACCEPTED);
-
     }
 
     @GetMapping("/view/{id}")
@@ -122,7 +120,7 @@ public class ProductController {
         if (!combinedResults.isEmpty()) {
             return new ResponseEntity<>(combinedResults, HttpStatus.OK);
         } else{
-            throw new ProductNotFoundException("No products found with name containing: " + searchKey);
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
         }
     }
 

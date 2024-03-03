@@ -1,7 +1,7 @@
 package com.seng22212project.bitebliss.services;
 
-import com.example.demo.dtos.CategoryDto;
-import com.example.demo.models.Category;
+import com.seng22212project.bitebliss.dtos.responses.CategoryDto;
+import com.seng22212project.bitebliss.models.Category;
 
 import java.util.List;
 

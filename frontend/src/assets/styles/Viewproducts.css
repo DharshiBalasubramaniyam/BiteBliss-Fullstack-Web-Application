@@ -33,7 +33,7 @@
 }
 
  
-.box-container .box {
+.box {
     position: relative;
     box-shadow: 0 0 20px var(--grey);
     display: flex;
@@ -45,27 +45,27 @@
     border: solid 2px black;
 }
 
-.products .box-container .box:hover {
+.box:hover {
     box-shadow:rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px; 
 }
 
-.products .box-container .box .image {
+.box .image {
     width: 100%;
     height: 280px;
     transition: 0.3s;
 }
-.products .box-container .box:hover .image {
+.box:hover .image {
     transform: scale(0.98);
 }
 
-.products .box-container .box .name{
+.box .name{
     font-size: 18px;
     text-transform: uppercase;
     width: 100%;margin-top: 5px;text-align: center;
     font-weight: bold;
  }
   
- .products .box-container .box .description{
+.box .description{
     padding-top: 0.5rem;
     font-size: 14px;
     text-align: center;
@@ -75,7 +75,7 @@
     text-overflow: ellipsis;    
  }  
 
- .products .box-container .box .price{
+.box .price{
     position: absolute;
     top:13px; 
     left:13px;
@@ -87,16 +87,12 @@
     background-color: var(--main);
  }
 
- .products .box-container .box .text-part{
+.box .text-part{
     width: 100%;
     transition: transform .3s ease-out;
  }
 
- .products .box-container .box:hover .text-part{
-    /* transform: translateY(-1rem); */
- }
-
-.products .box-container .box button{
+.box button{
     width: 100%;
     font-size: 17px;
     padding: 9px 0;
@@ -109,7 +105,7 @@
     border: 2px solid var(--main);
     color: black;
 }
-.products .box-container .box button:hover, button:hover {
+.box button:hover, button:hover {
    background-color: black;
    color: white;border: 2px solid black;
 }
@@ -153,7 +149,7 @@
     color: var(--pink);
  }
 
-.search-results {
+/* .search-results {
     margin: 1rem;
   }
   
@@ -173,4 +169,4 @@
     padding: 10px;
     display: flex;
     flex-direction: column;
-  }
+  } */

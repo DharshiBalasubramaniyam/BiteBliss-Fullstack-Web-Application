@@ -1,7 +1,7 @@
 package com.seng22212project.bitebliss.handlers;
 
-import com.seng22212project.bitebliss.dtos.ApiResponseDto;
-import com.seng22212project.bitebliss.dtos.ApiResponseStatus;
+import com.seng22212project.bitebliss.dtos.responses.ApiResponseDto;
+import com.seng22212project.bitebliss.enums.ApiResponseStatus;
 import com.seng22212project.bitebliss.exceptions.UserAlreadyExistsException;
 import com.seng22212project.bitebliss.exceptions.UserNotFoundException;
 import com.seng22212project.bitebliss.exceptions.UserServiceLogicException;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestControllerAdvice
-public class RestExceptionHandler {
+public class UserServiceExceptionHandler {
 
     @ExceptionHandler(value = UserNotFoundException.class)
     public ResponseEntity<ApiResponseDto<?>> UserNotFoundExceptionHandler(UserNotFoundException exception) {
@@ -36,6 +36,17 @@ public class RestExceptionHandler {
     @ExceptionHandler(value = UserVerificationFailedException.class)
     public ResponseEntity<ApiResponseDto<?>> UserVerificationFailedExceptionHandler(UserVerificationFailedException exception) {
         return ResponseEntity.badRequest().body(new ApiResponseDto<>(ApiResponseStatus.FAILED.name(), exception.getMessage()));
+    }
+
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiResponseDto<?>> MethodArgumentNotValidExceptionHandler(MethodArgumentNotValidException exception) {
+
+        List<String> errorMessage = new ArrayList<>();
+
+        exception.getBindingResult().getFieldErrors().forEach(error -> {
+            errorMessage.add(error.getDefaultMessage());
+        });
+        return ResponseEntity.badRequest().body(new ApiResponseDto<>(ApiResponseStatus.FAILED.name(), errorMessage.toString()));
     }
 
 

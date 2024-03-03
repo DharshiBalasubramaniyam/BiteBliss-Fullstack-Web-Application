@@ -7,7 +7,6 @@
     align-items: center;
     justify-content: center;
     padding: 15px;
-
 }
 .auth-container::after {
     content: "";
@@ -89,7 +88,7 @@
 }
 .auth-container .auth-wrapper form input[type='submit']:hover, button:hover,
 .auth-container .auth-wrapper form input[type='submit'].outline:hover, button.outline:hover{
-    background-color: #ffab3d;
+    background-color: black;border: 2px solid black;color: white;
 }
 .auth-container .auth-wrapper form input[type='submit']:active, button:active{
     scale: 0.98;
@@ -102,7 +101,7 @@
     color: rgb(104, 104, 104);
 }
 .auth-container .auth-wrapper form input[type='submit'].outline, button.outline{
-    background-color: transparent;
+    background-color: transparent;border: 2px solid black;
 }
 .auth-container .auth-wrapper form small {
     color: #ff0000;

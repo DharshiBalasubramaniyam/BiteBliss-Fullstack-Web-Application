@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import '../assets/styles/hero.css'
 import {Link} from 'react-router-dom'
 import AuthService from '../api-service/authService';
+import AnchorLink from 'react-anchor-link-smooth-scroll'
 
 function Hero() {
 
@@ -15,6 +16,7 @@ function Hero() {
             console.log(user);
         }
     }, [])
+    
     return(
         <section className="hero-section" id='hero'>
             {
@@ -24,7 +26,7 @@ function Hero() {
 
             <h1>Where every bite is crafted and every moment is a culinary delight!</h1>
             <div>
-                <button>Order now</button>
+                <AnchorLink href='#menu'><button>Order now</button></AnchorLink>
                 {
                     (!user) ? <Link to='/auth/register'> <button className='outline'>Register</button></Link> : <></>
                 }

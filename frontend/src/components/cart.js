@@ -5,50 +5,20 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import API_BASE_URL from "../api-service/apiConfig";
 import axios from 'axios';
 import AuthService from "../api-service/authService";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import useCartItems from "../hooks/useCartItems";
 
 const Cart = ({ isCartOpen, onClose, setNoOfCartItemsInHeader }) => {
-  const [products, setProducts] = useState([]);
-  const [isLoading, setLoading] = useState(false);
-  const [noOfCartItems, setNoOfCartItems] = useState(0);
-  const [subtotal, setSubtotal] = useState(0.0);
 
-  console.log(products)
+  const [cartId, cartItems, noOfCartItems, subtotal, isLoading, setIsLoading, fetchData] = useCartItems()
+  const navigate = useNavigate();
 
-  const fetchCartItems = async () => {
-    setLoading(true)
-    try {
-      const response = await axios.get(API_BASE_URL + '/user/cart/getCartItems',
-        {
-          headers: AuthService.authHeader(),
-          params: {
-            email: AuthService.getCurrentUser().email
-          }
-        }).then(
-          (response) => {
-            if (response.data.status === "SUCCESS") {
-              console.log(response.data);
-              if (response.data.response.cartItemResponse) {
-                setProducts(response.data.response.cartItemResponse)
-                setNoOfCartItems(response.data.response.noOfCartItems)
-                setNoOfCartItemsInHeader(response.data.response.noOfCartItems)
-                setSubtotal(response.data.response.subtotal)
-              }
-              return
-            }
-          },
-          (error) => {
-            console.log(error);
-          }
-        )
-    } catch (error) {
-      console.error("Error fetching cart items:", error);
-    }
-    setLoading(false)
-  };
+  useEffect(() => {
+    setNoOfCartItemsInHeader(noOfCartItems)
+  }, [noOfCartItems])
 
   const onQuantityChange = async (productId, quantity) => {
-    setLoading(true)
+    setIsLoading(true)
     try {
       const response = await axios.put(API_BASE_URL + '/user/cart/update',
         {
@@ -64,7 +34,7 @@ const Cart = ({ isCartOpen, onClose, setNoOfCartItemsInHeader }) => {
           (response) => {
             console.log(response);
             if (response.data.status === "SUCCESS") {
-              fetchCartItems()
+              fetchData()
               return
             }
           },
@@ -75,11 +45,11 @@ const Cart = ({ isCartOpen, onClose, setNoOfCartItemsInHeader }) => {
     } catch (error) {
       console.error("Error fetching cart items:", error);
     }
-    setLoading(false)
+    setIsLoading(false)
   };
 
   const onProductRemove = async (cartItemId) => {
-    setLoading(true)
+    setIsLoading(true)
     try {
       const response = await axios.delete(API_BASE_URL + '/user/cart/delete',
         {
@@ -91,7 +61,7 @@ const Cart = ({ isCartOpen, onClose, setNoOfCartItemsInHeader }) => {
           (response) => {
             console.log(response);
             if (response.data.status === "SUCCESS") {
-              fetchCartItems()
+              fetchData()
               return
             }
           },
@@ -102,12 +72,14 @@ const Cart = ({ isCartOpen, onClose, setNoOfCartItemsInHeader }) => {
     } catch (error) {
       console.error("Error fetching cart items:", error);
     }
-    setLoading(false)
+    setIsLoading(false)
   };
-  
-  useEffect(() => {
-    fetchCartItems()
-  }, []);
+
+  const onCheckout = () => {
+    const cart = {cartId: cartId, subtotal: subtotal}
+    localStorage.setItem("cart", JSON.stringify(cart))
+    navigate('/my/order/checkout');
+  }
 
   return (
     <div className={isCartOpen ? "shoppingCart active" : "shoppingCart"}>
@@ -118,10 +90,10 @@ const Cart = ({ isCartOpen, onClose, setNoOfCartItemsInHeader }) => {
         </div>
       </div>
       <div className="cart-products">
-        {products.length === 0 && (
+        {cartItems.length === 0 && (
           <span className="empty-text">{isLoading ? "Loading..." : "Your cart is empty!"}</span>
         )}
-        {products.map((cartItem) => (
+        {cartItems.map((cartItem) => (
           <div className="cart-product" key={cartItem.cartItemId}>
             <img src={require(`../assets/images/${cartItem.imageUrl}`)} alt={cartItem.productName} />
             <div className="product-info">
@@ -160,10 +132,10 @@ const Cart = ({ isCartOpen, onClose, setNoOfCartItemsInHeader }) => {
         ))}
       </div>
       <div className="cart-summary">
-        {products.length > 0 && (
+        {cartItems.length > 0 && (
           <>
             <h3>Subtotal: Rs. {subtotal}</h3>
-            <Link to='/my/order/checkout'><button className="btn checkout-btn">Proceed to checkout</button></Link>
+            <button className="btn checkout-btn" onClick={onCheckout}>Proceed to checkout</button>
           </>
         )}
       </div>

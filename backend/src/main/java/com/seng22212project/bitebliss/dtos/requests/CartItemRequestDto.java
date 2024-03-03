@@ -1,9 +1,9 @@
-package com.seng22212project.bitebliss.payload;
-public class ItemRequest {
+package com.seng22212project.bitebliss.dtos.requests;
+public class CartItemRequestDto {
     private int productId;
     private int quantity;
 
-    public ItemRequest(int productId, int quantity) {
+    public CartItemRequestDto(int productId, int quantity) {
         this.productId = productId;
         this.quantity = quantity;
     }

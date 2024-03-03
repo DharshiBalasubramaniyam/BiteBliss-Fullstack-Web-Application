@@ -1,7 +1,7 @@
 package com.seng22212project.bitebliss.controllers;
 
-import com.seng22212project.bitebliss.dtos.JwtResponseDto;
-import com.seng22212project.bitebliss.dtos.SignInRequestDto;
+import com.seng22212project.bitebliss.dtos.responses.JwtResponseDto;
+import com.seng22212project.bitebliss.dtos.requests.SignInRequestDto;
 import com.seng22212project.bitebliss.security.UserDetailsImpl;
 import com.seng22212project.bitebliss.security.jwt.JwtUtils;
 import jakarta.validation.Valid;

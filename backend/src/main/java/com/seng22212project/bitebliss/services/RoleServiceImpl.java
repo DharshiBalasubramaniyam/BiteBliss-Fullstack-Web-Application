@@ -1,6 +1,6 @@
 package com.seng22212project.bitebliss.services;
 
-import com.seng22212project.bitebliss.models.ERole;
+import com.seng22212project.bitebliss.enums.ERole;
 import com.seng22212project.bitebliss.models.Role;
 import com.seng22212project.bitebliss.repositories.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;

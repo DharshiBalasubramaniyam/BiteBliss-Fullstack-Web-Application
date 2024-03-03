@@ -77,6 +77,7 @@ const resetPassword = async (email, password) => {
 
 const authHeader = () => {
     const user = getCurrentUser();
+    console.log(user)
     if (user && user.token) {
       return { Authorization: 'Bearer ' + user.token };
     } else {

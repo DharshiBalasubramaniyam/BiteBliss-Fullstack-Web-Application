@@ -1,4 +1,4 @@
-package com.seng22212project.bitebliss.dtos;
+package com.seng22212project.bitebliss.dtos.responses;
 
 public class CategoryDto {
     private int category_id;

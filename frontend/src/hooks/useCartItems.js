@@ -30,7 +30,6 @@ function useCartItems() {
                 }).then(
                     (response) => {
                         if (response.data.status === "SUCCESS") {
-                            console.log(response.data);
                             if (response.data.response.cartItemResponse) {
                                 setCartId(response.data.response.cartId)
                                 setCartItems(response.data.response.cartItemResponse)

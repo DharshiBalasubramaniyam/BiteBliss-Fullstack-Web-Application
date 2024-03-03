@@ -2,8 +2,9 @@ import React, { useState, useRef, useEffect } from 'react';
 import ViewproductsContent from './ViewproductsContent';
 import 'react-alice-carousel/lib/alice-carousel.css';
 import { loadProduct } from "../api-service/Product_service";
+import Loading from './loading';
 
-const ViewproductsWrapper = () => {
+function  ViewproductsWrapper(){
   const [productDetails, setProductDetails] = useState(null);
 
   useEffect(() => {
@@ -13,7 +14,6 @@ const ViewproductsWrapper = () => {
   const getProduct = () => {
     loadProduct()
       .then((data) => {
-        console.log("Received data:", data);
         setProductDetails(data);
         
       })
@@ -23,12 +23,14 @@ const ViewproductsWrapper = () => {
   };
 
   if (productDetails === null) {
-    return <p>Loading products...</p>;
+    return <Loading/>;
   }
   
   return (
   
-          <ViewproductsContent productDetails={productDetails} />
+    <div id='menu'>
+      <ViewproductsContent productDetails={productDetails} />
+    </div>
         
   );
 };

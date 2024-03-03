@@ -2,17 +2,18 @@ import React, { useRef, useState } from 'react';
 import AliceCarousel from 'react-alice-carousel';
 import Viewproducts from './Viewproducts';
 import { FaChevronRight, FaChevronLeft } from 'react-icons/fa';
+import ProductsNotFound from './productsNotFound';
 
 
-const ViewproductsContent = ({ productDetails }) => {
+function ViewproductsContent({ productDetails }) {
   const [activeIndexes, setActiveIndexes] = useState({});
   const carouselRefs = useRef({});
 
   const responsive = {
     0: { items: 1 },
     700: { items: 2 },
-    950: { items: 3 },
-    1150: { items: 4 },
+    1100: { items: 3 },
+    1350: { items: 4 },
   };
 
   const getCurrentBreakpoint = () => {
@@ -45,7 +46,7 @@ const ViewproductsContent = ({ productDetails }) => {
   const renderProductsByCategory = () => {
 
     if (!productDetails) {
-      return <p>No products available.</p>;
+      return <ProductsNotFound/>;
     }
 
     const groupedProducts = productDetails.reduce((acc, product) => {
@@ -61,7 +62,7 @@ const ViewproductsContent = ({ productDetails }) => {
     }, {});
 
     return Object.values(groupedProducts).map((category) => (
-      <div key={category.categoryName}>
+      <div key={category.categoryName} id={category.categoryName}>
         <div className='products-main'>
       <div style={{ position: "relative", padding: "30px 40px 30px"}}>
         <h2 className='title'>{category.categoryName}</h2>

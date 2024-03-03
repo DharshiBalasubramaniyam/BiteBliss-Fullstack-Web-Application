@@ -23,8 +23,7 @@ function Profile() {
         <>
             <UserHeader />
             <div className='user'>
-                <h1>Hello John!</h1>
-                <h2>My profile</h2>
+                <h1>Hello {AuthService.getCurrentUser().username}!</h1>
                 <form>
                     <div className='input-box'>
                         <label>Username</label><br />

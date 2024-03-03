@@ -1,6 +1,7 @@
-package com.seng22212project.bitebliss.dtos;
+package com.seng22212project.bitebliss.dtos.responses;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.seng22212project.bitebliss.dtos.responses.CategoryDto;
 
 public class ProductDto {
 

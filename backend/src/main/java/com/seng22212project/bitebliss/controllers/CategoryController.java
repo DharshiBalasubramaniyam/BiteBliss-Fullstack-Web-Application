@@ -1,7 +1,7 @@
 package com.seng22212project.bitebliss.controllers;
 
-import com.example.demo.dtos.CategoryDto;
-import com.example.demo.services.CategoryService;
+import com.seng22212project.bitebliss.dtos.responses.CategoryDto;
+import com.seng22212project.bitebliss.services.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/bitebliss/categories")
+@CrossOrigin(origins = "http://localhost:3000")
 public class CategoryController {
 
     @Autowired

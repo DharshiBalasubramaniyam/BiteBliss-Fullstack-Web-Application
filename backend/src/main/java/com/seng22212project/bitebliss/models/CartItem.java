@@ -1,9 +1,15 @@
 package com.seng22212project.bitebliss.models;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name="Cart_Item")
+@AllArgsConstructor
+@NoArgsConstructor
+@Data
 public class CartItem {
 
     @Id
@@ -15,47 +21,16 @@ public class CartItem {
 
     @ManyToOne
     @JoinColumn(name="productId")
-    private Product product;
+    private Products product;
+
     private int quantity;
+
     private double totalPrice;
 
-    public long getCartItemId() {
-        return cartItemId;
-    }
-
-    public void setCartItemId(long cartItemId) {
-        this.cartItemId = cartItemId;
-    }
-
-    public int getQuantity() {
-        return quantity;
-    }
-
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
-    }
-
-    public double getTotalPrice() {
-        return totalPrice;
-    }
-
-    public void setTotalPrice(double totalPrice) {
-        this.totalPrice = totalPrice;
-    }
-
-    public Cart getCart() {
-        return cart;
-    }
-
-    public void setCart(Cart cart) {
+    public CartItem(Cart cart, Products product, int quantity, double totalPrice) {
         this.cart = cart;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
-
-    public void setProduct(Product product) {
         this.product = product;
+        this.quantity = quantity;
+        this.totalPrice = totalPrice;
     }
 }

@@ -1,0 +1,42 @@
+.checkout-container {
+    padding-top: 8vh;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    min-height: 100dvh;
+
+}
+.checkout-container form {
+    width: 100%;
+    margin-top: 10px;
+    max-width: 900px;
+    background-color: rgb(232, 232, 232);
+    padding: 10px;
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.checkout-container form .input-box{
+    width: 100%;
+    gap: 5px;
+    display: flex;
+    flex-direction: column;
+
+}
+.checkout-container form .input-box input, select {
+    padding: 9px 10px;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid rgb(157, 157, 157);
+    font-size: 14px;
+}
+.checkout-container form .input-box input:focus, select:focus {
+    border-color: var(--main);
+    outline: 2px solid var(--main);
+}
+.text-danger {
+    color: red;
+}

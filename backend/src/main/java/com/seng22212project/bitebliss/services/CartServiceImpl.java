@@ -1,12 +1,12 @@
 package com.seng22212project.bitebliss.services;
 
-import com.seng22212project.bitebliss.dtos.ApiResponseDto;
-import com.seng22212project.bitebliss.dtos.ApiResponseStatus;
-import com.seng22212project.bitebliss.dtos.CartItemResponseDto;
-import com.seng22212project.bitebliss.dtos.CartResponseDto;
+import com.seng22212project.bitebliss.dtos.responses.ApiResponseDto;
+import com.seng22212project.bitebliss.enums.ApiResponseStatus;
+import com.seng22212project.bitebliss.dtos.responses.CartItemResponseDto;
+import com.seng22212project.bitebliss.dtos.responses.CartResponseDto;
 import com.seng22212project.bitebliss.exceptions.UserNotFoundException;
 import com.seng22212project.bitebliss.models.*;
-import com.seng22212project.bitebliss.payload.ItemRequest;
+import com.seng22212project.bitebliss.dtos.requests.CartItemRequestDto;
 import com.seng22212project.bitebliss.repositories.*;
 
 import java.util.ArrayList;
@@ -16,7 +16,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Component
 @Slf4j
@@ -31,7 +30,7 @@ public class CartServiceImpl implements CartService{
     @Autowired
     private CartItemRepository cartItemRepository;
 
-    public ResponseEntity<ApiResponseDto<?>> addItem(ItemRequest item, String email) throws UserNotFoundException {
+    public ResponseEntity<ApiResponseDto<?>> addItem(CartItemRequestDto item, String email) throws UserNotFoundException {
         User user = userService.findByEmail(email);
         try {
             Products product = this.productRepo.findById(item.getProductId()).orElseThrow(() -> new RuntimeException("Product not found"));
@@ -86,7 +85,7 @@ public class CartServiceImpl implements CartService{
             }
             return ResponseEntity.ok(new ApiResponseDto<>(
                     ApiResponseStatus.SUCCESS.name(),
-                    new CartResponseDto(cartItems, noOfCartItems, subtotal)
+                    new CartResponseDto(cart.getCartId(), cartItems, noOfCartItems, subtotal)
             ));
     }
 
@@ -97,7 +96,7 @@ public class CartServiceImpl implements CartService{
         ));
     }
 
-    public ResponseEntity<ApiResponseDto<?>> updateCartItemQuantity(ItemRequest itemRequest, String email) throws UserNotFoundException {
+    public ResponseEntity<ApiResponseDto<?>> updateCartItemQuantity(CartItemRequestDto itemRequest, String email) throws UserNotFoundException {
         return addItem(itemRequest, email);
     }
 

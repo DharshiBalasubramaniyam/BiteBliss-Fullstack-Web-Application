@@ -1,14 +1,13 @@
-package com.seng22212project.bitebliss.services.impl;
+package com.seng22212project.bitebliss.services;
 
-import com.example.demo.dtos.CategoryDto;
-import com.example.demo.dtos.ProductDto;
-import com.example.demo.exceptions.CategoryNotFoundException;
-import com.example.demo.exceptions.ProductNotFoundException;
-import com.example.demo.models.Category;
-import com.example.demo.models.Products;
-import com.example.demo.repositories.CategoryRepository;
-import com.example.demo.repositories.ProductRepository;
-import com.example.demo.services.ProductService;
+import com.seng22212project.bitebliss.dtos.responses.CategoryDto;
+import com.seng22212project.bitebliss.dtos.responses.ProductDto;
+import com.seng22212project.bitebliss.exceptions.CategoryNotFoundException;
+import com.seng22212project.bitebliss.exceptions.ProductNotFoundException;
+import com.seng22212project.bitebliss.models.Category;
+import com.seng22212project.bitebliss.models.Products;
+import com.seng22212project.bitebliss.repositories.CategoryRepository;
+import com.seng22212project.bitebliss.repositories.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
