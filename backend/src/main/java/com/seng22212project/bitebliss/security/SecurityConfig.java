@@ -58,6 +58,9 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
                         auth.requestMatchers("/bitebliss/auth/**").permitAll()
+                                .requestMatchers("/bitebliss/products/**").permitAll()
+                                .requestMatchers("/bitebliss/categories/**").permitAll()
+                                .requestMatchers("/bitebliss/user/**").permitAll()
                                 .anyRequest().authenticated()
                 );
 

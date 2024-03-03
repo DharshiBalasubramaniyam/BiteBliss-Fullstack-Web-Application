@@ -1,5 +1,6 @@
 package com.seng22212project.bitebliss.models;
 
+import com.seng22212project.bitebliss.enums.ERole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

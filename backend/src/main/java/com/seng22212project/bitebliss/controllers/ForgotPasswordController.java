@@ -1,20 +1,16 @@
 package com.seng22212project.bitebliss.controllers;
 
-import com.seng22212project.bitebliss.dtos.ApiResponseDto;
-import com.seng22212project.bitebliss.dtos.ResetPasswordDto;
+import com.seng22212project.bitebliss.dtos.responses.ApiResponseDto;
+import com.seng22212project.bitebliss.dtos.requests.ResetPasswordRequestDto;
 import com.seng22212project.bitebliss.exceptions.UserNotFoundException;
 import com.seng22212project.bitebliss.exceptions.UserServiceLogicException;
 import com.seng22212project.bitebliss.exceptions.UserVerificationFailedException;
 import com.seng22212project.bitebliss.services.UserService;
-import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.repository.query.Param;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.io.UnsupportedEncodingException;
 
 @RestController
 @RequestMapping("/bitebliss/auth/forgotpassword")
@@ -36,7 +32,7 @@ public class ForgotPasswordController {
     }
 
     @PostMapping("/resetPassword")
-    public ResponseEntity<ApiResponseDto<?>> resetPassword(@RequestBody @Valid ResetPasswordDto resetPasswordDto)
+    public ResponseEntity<ApiResponseDto<?>> resetPassword(@RequestBody @Valid ResetPasswordRequestDto resetPasswordDto)
             throws UserNotFoundException, UserServiceLogicException {
         return userService.resetPassword(resetPasswordDto);
     }

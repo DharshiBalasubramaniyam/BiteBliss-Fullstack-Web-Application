@@ -1,5 +1,5 @@
 .app-header {
-    height: 10vh;
+    height: 7vh;
     width: 100%;
     padding: 0 10%;
     display: flex;
@@ -20,12 +20,23 @@
     display: flex;
     align-items: center;
 }
+.app-header > ul {
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
 .app-header ul li {
     display: inline-block;
-    margin: 0 5px;
+    padding: 0 15px;
     cursor: pointer;
     font-size: 15px;
     position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;transition: 0.3s;
+}
+.app-header ul:first-of-type li:hover {
+    background-color: var(--main);
 }
 .app-header ul .nav-link {
     padding: 10px;transition: 0.2s;
@@ -37,9 +48,9 @@
 }
 
 .app-header ul .nav-link, .app-header .fa, .app-header .fa + span{
-    color: black;
+    color: black;transition: 0.3s;
 }
-.app-header ul .nav-link:hover, .app-header .fa:hover, .app-header .fa:hover + span{
+.app-header .fa:hover, .app-header .fa:hover + span{
     color: #f7991e;
 }
 .fa-times, .fa-bars {
@@ -52,10 +63,9 @@
 }
 
 .app-header ul li ul{
-    position: absolute;left: 0;top: 130%;
-    box-shadow: 0 0 10px rgb(188, 188, 188);
-    background-color: white;
-    width: 150px;
+    position: absolute;left: 0;top: 7vh;
+    background-color: var(--main);
+    width: 180px;
     display: flex;
     flex-direction: column;transition: opacity 0.5s;
     opacity: 0;
@@ -65,10 +75,10 @@
     transition: opacity 0.5s;
     opacity: 0;
     visibility: hidden;
-    border-bottom: 1px solid rgb(232, 232, 232);
+    border-bottom: 1px solid #dd7d00;
 }
-.app-header ul li ul li:hover {
-    background-color: var(--main);
+.app-header ul li ul li:hover .nav-link{
+    transform: translateX(7px);
 }
 .app-header ul li ul li .nav-link:hover{
     color: black;
@@ -83,10 +93,13 @@
     .app-header  {
         padding: 0 15px;
     }
+    .app-header > ul:first-of-type {
+        flex-direction: column;
+    }
     .app-header ul:first-of-type {
         background-color: white;
         position: fixed;
-        top: 10vh;
+        top: 7vh;
         height: 100vh;
         width: 100%;
         transition: left 0.3s;
@@ -104,6 +117,7 @@
         padding: 10px;
         margin: 0;
         text-align: center;
+        height: max-content;
     }
     .app-header ul:first-of-type li:first-of-type {
         border-top: 2px solid rgb(124, 124, 124);

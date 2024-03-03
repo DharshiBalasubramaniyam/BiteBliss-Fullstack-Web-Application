@@ -1,5 +1,4 @@
-package com.seng22212project.bitebliss.dtos;
-
+package com.seng22212project.bitebliss.dtos.responses;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,18 +7,18 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CartItemResponseDto {
-    private long cartItemId;
+public class OrderItemResponseDto {
+    private int orderItemId;
 
     private int product_id;
 
     private String productName;
 
-    private String price;
+    private String productPrice;
 
     private String imageUrl;
 
-    private int quantity;
+    private double totalProductPrice;
 
-    private double totalPrice;
+    private int productQuantity;
 }

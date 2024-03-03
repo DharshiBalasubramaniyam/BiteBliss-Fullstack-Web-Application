@@ -1,6 +1,6 @@
-package com.seng22212project.bitebliss.services.impl;
+package com.seng22212project.bitebliss.services;
 
-import com.example.demo.services.fileUpload;
+import com.seng22212project.bitebliss.services.fileUpload;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 

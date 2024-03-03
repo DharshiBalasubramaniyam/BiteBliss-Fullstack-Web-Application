@@ -1,8 +1,8 @@
 package com.seng22212project.bitebliss.services;
 
-import com.seng22212project.bitebliss.dtos.ApiResponseDto;
-import com.seng22212project.bitebliss.dtos.ResetPasswordDto;
-import com.seng22212project.bitebliss.dtos.SignUpRequestDto;
+import com.seng22212project.bitebliss.dtos.responses.ApiResponseDto;
+import com.seng22212project.bitebliss.dtos.requests.ResetPasswordRequestDto;
+import com.seng22212project.bitebliss.dtos.requests.SignUpRequestDto;
 import com.seng22212project.bitebliss.exceptions.UserAlreadyExistsException;
 import com.seng22212project.bitebliss.exceptions.UserNotFoundException;
 import com.seng22212project.bitebliss.exceptions.UserServiceLogicException;
@@ -34,5 +34,7 @@ public interface UserService {
 
     ResponseEntity<ApiResponseDto<?>> verifyRegistrationVerification(String code) throws UserVerificationFailedException;
 
-    ResponseEntity<ApiResponseDto<?>> resetPassword(ResetPasswordDto resetPasswordDto) throws UserNotFoundException, UserServiceLogicException;
+    ResponseEntity<ApiResponseDto<?>> resetPassword(ResetPasswordRequestDto resetPasswordDto) throws UserNotFoundException, UserServiceLogicException;
+
+
 }

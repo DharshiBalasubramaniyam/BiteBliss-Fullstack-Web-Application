@@ -1,180 +1,185 @@
-
 package com.seng22212project.bitebliss.services;
 
-import com.seng22212project.bitebliss.dtos.*;
+import com.seng22212project.bitebliss.dtos.requests.OrderRequestDto;
+import com.seng22212project.bitebliss.dtos.responses.ApiResponseDto;
+import com.seng22212project.bitebliss.dtos.responses.OrderItemResponseDto;
+import com.seng22212project.bitebliss.dtos.responses.OrderResponseDto;
+import com.seng22212project.bitebliss.enums.ApiResponseStatus;
+import com.seng22212project.bitebliss.enums.OrderPaymentStatus;
+import com.seng22212project.bitebliss.enums.OrderStatus;
+import com.seng22212project.bitebliss.exceptions.ProductNotFoundException;
+import com.seng22212project.bitebliss.exceptions.UserNotFoundException;
 import com.seng22212project.bitebliss.models.*;
-import com.seng22212project.bitebliss.payload.OrderResponse;
 import com.seng22212project.bitebliss.repositories.*;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.modelmapper.ModelMapper;
 
-import jakarta.persistence.EntityNotFoundException;
-
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Collectors;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
+@Slf4j
 public class OrderServices {
 
     @Autowired
-    private UserRepository userRepo;
+    private UserRepository userRepository;
 
     @Autowired
     private CartRepository cartRepo;
 
     @Autowired
-    private ModelMapper modelMapper;
+    private OrderRepository orderRepo;
 
     @Autowired
-    private OrderRepository orderRepo;
+    private CartItemRepository cartItemRepository;
+
     @Autowired
-    private JavaMailSender javaMailSender;
+    private OrderItemRepository orderItemRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired NotificationService notificationService;
 
     // Order Create method
-    public OrderDto orderCreate(OrderRequest request, Long userId) {
-        // Retrieving user information by user ID
-        User user = getUserById(userId);
+    public ResponseEntity<ApiResponseDto<?>> createOrder(OrderRequestDto request) throws UserNotFoundException {
 
-        // Retrieving cart information
-        int cartId = request.getCartId();
-        Cart cart = this.cartRepo.findById(cartId).orElseThrow(() -> new MissingResourceException("Cart not found"));
+        try {
+            User user = userRepository.findById(request.getUserId()).orElseThrow(() -> new UserNotFoundException("user not found!"));
+            Cart cart = this.cartRepo.findById(request.getCartId()).orElseThrow(() -> new RuntimeException("Cart not found!"));
+            System.out.println(request.getCartId());
 
-        // Mapping OrderRequest to OrderDto
-        String addressLine1 = request.getAddressLine1();
-        String addressLine2 = request.getAddressLine2();
-        String city = request.getCity();
-        String district = request.getDistrict();
+            if (cart.getUser().getId() != request.getUserId()) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                        new ApiResponseDto<>(ApiResponseStatus.FAILED.name(), "Invalid request to create an order!")
+                );
+            }
+            Order order = new Order();
+            order.setUser(request.getUserId());
+            order.setFirstName(request.getFirstName());
+            order.setLastName(request.getLastName());
+            order.setAddressLine1(request.getAddressLine1());
+            order.setAddressLine2(request.getAddressLine2());
+            order.setCity(request.getCity());
+            order.setDistrict(request.getDistrict());
+            order.setPhoneNo(request.getPhone());
+            order.setOrderAmt(request.getTotal());
+            order.setPlacedOn(LocalDateTime.now());
+            order.setOrderStatus(OrderStatus.PENDING.name());
+            order.setPaymentStatus(OrderPaymentStatus.UNPAID.name());
+            order = orderRepo.save(order);
 
-        // Processing items in the cart and creating OrderItem objects
-        Set<OrderItem> orderItems = processCartItems(cart);
+            Set<OrderItem> orderItems = saveOrderItems(cart, order);
 
-        // Creating the Order object
-        Order order = createOrderObject(user, addressLine1, addressLine2, city, district, orderItems);
+            clearCart(cart);
 
-        // Saving the order and clearing the cart
-        Order savedOrder = saveOrderAndClearCart(order, cart);
+            notificationService.sendOrderConfirmationEmail(user, order, orderItems);
 
-        sendOrderConfirmationEmail(savedOrder, user.getEmail());
+            return ResponseEntity.status(HttpStatus.CREATED).body(
+                    new ApiResponseDto<>(ApiResponseStatus.SUCCESS.name(), "Order has been successfully placed!")
+            );
 
-        return this.modelMapper.map(savedOrder, OrderDto.class);
+        }catch(Exception e) {
+            log.error("Failed to create order: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                    new ApiResponseDto<>(ApiResponseStatus.FAILED.name(), "Failed to create order: Please try again later!")
+            );
+        }
     }
 
-    // Method to get the user by user ID
-    private User getUserById(Long userId) {
-        return this.userRepo.findById(userId).orElseThrow(() -> new MissingResourceException("User not found"));
-    }
+//    @Override
+    public ResponseEntity<ApiResponseDto<?>> getOrders(String email) throws UserNotFoundException {
+        User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found!"));;
+        List<Order> orders = orderRepo.findByUserOrderByOrderIdDesc(user.getId());
+        List<OrderResponseDto> ordersResponse = new ArrayList<>();
 
+        for(Order order: orders) {
+            ordersResponse.add(orderToOrderResponseDto(order));
+        }
+        return ResponseEntity.ok(new ApiResponseDto<>(
+                ApiResponseStatus.SUCCESS.name(),
+                ordersResponse
+        ));
+
+    }
 
     // Method to process cart items and create OrderItem objects
-    private Set<OrderItem> processCartItems(Cart cart) {
-        AtomicReference<Double> totalOrderPrice = new AtomicReference<>(0.0);
-        return cart.getItems().stream().map(cartItem -> {
+    private Set<OrderItem> saveOrderItems(Cart cart, Order order) {
+        List<CartItem> cartItems =  cartItemRepository.findByCart(cart);
+        Set<OrderItem> orderItems = new HashSet<>();
+
+        for(CartItem cartItem: cartItems) {
             OrderItem orderItem = new OrderItem();
-            orderItem.setProduct(cartItem.getProduct());
+            orderItem.setOrder(order);
+            orderItem.setProduct(cartItem.getProduct().getProduct_id());
             orderItem.setProductQuantity(cartItem.getQuantity());
             orderItem.setTotalProductPrice(cartItem.getTotalPrice());
-            orderItem.setOrder(order);
-
-            totalOrderPrice.set(totalOrderPrice.get() + orderItem.getTotalProductPrice());
-
-            return orderItem;
-        }).collect(Collectors.toSet());
-    }
-
-    // Method to create the Order object
-    private Order createOrderObject(User user, String addressLine1, String addressLine2, String city, String district, Set<OrderItem> orderItems) {
-        Order order = new Order();
-        order.setAddressLine1(addressLine1);
-        order.setAddressLine2(addressLine2);
-        order.setCity(city);
-        order.setDistrict(district);
-        order.setOrderStatus("created");
-        order.setPaymentStatus("not paid");
-        order.setUserId(user);
-        order.setOrderItem(orderItems);
-        order.setOrderAmt(orderItems.stream().mapToDouble(OrderItem::getTotalProductPrice).sum());
-
-        return order;
-    }
-
-    // Method to save the order and clear the cart
-    private Order saveOrderAndClearCart(Order order, Cart cart) {
-        if (order.getOrderAmt() > 0) {
-            Order savedOrder = this.orderRepo.save(order);
-            cart.getItems().clear();
-            this.cartRepo.save(cart);
-            System.out.println("Hello");
-            return savedOrder;
-        } else {
-            System.out.println(order.getOrderAmt());
-            throw new MissingResourceException("Please add items to the cart before placing an order");
+            orderItems.add(orderItem);
+            orderItem = orderItemRepository.save(orderItem);
         }
+
+        return orderItems;
+    }
+
+    private void clearCart(Cart cart) {
+        List<CartItem> cartItems =  cartItemRepository.findByCart(cart);
+        cartItemRepository.deleteAll(cartItems);
+        cartRepo.delete(cart);
     }
 
     // Method to cancel an order
-    public void cancelOrder(int orderId) {
-        Order order = this.orderRepo.findById(orderId).orElseThrow(() -> new MissingResourceException("Order not found"));
-        this.orderRepo.delete(order);
-    }
-
-    // Method to find an order by ID
-    public OrderDto findById(int orderId) {
-        Order order = this.orderRepo.findById(orderId)
-                .orElseThrow(() -> new EntityNotFoundException("Order not found"));
-
-        return this.modelMapper.map(order, OrderDto.class);
-
-    }
-
-    // Method to retrieve all orders with pagination
-//    public OrderResponse findAllOrders(int pageNumber, int pageSize) {
-//        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-//        Page<Order> findAll = this.orderRepo.findAll(pageable);
-//        List<Order> content = findAll.getContent();
-//
-//        // Mapping Order objects to OrderDto
-//        List<OrderDto> collect = content.stream().map(each -> this.modelMapper.map(each, OrderDto.class)).collect(Collectors.toList());
-//
-//        // Creating and returning OrderResponse
-//        OrderResponse response = new OrderResponse();
-//        response.setContent(collect);
-//        response.setPageNumber(findAll.getNumber());
-//        response.setLastPage(findAll.isLast());
-//        response.setPageSize(findAll.getSize());
-//        response.setTotalPage(findAll.getTotalPages());
-//        response.setTotalElement(findAll.getTotalElements()); // Fixed typo here
-//
-//        return response;
-//    }
-    private void sendOrderConfirmationEmail(Order order, String userEmail) {
-        SimpleMailMessage mailMessage = new SimpleMailMessage();
-        mailMessage.setTo(userEmail);
-        mailMessage.setSubject("Order Confirmation");
-
-        StringBuilder emailContent = new StringBuilder();
-        emailContent.append("Thank you for your order!\n\nOrder Details:\n");
-        emailContent.append("Order ID: ").append(order.getId()).append("\n");
-        emailContent.append("Total Amount: $").append(order.getOrderAmt()).append("\n");
-
-        // Include order items
-        Set<OrderItem> orderItems = order.getOrderItem();
-        for (OrderItem item : orderItems) {
-            emailContent.append("Product: ").append(item.getProduct().getName()).append("\n");
-            emailContent.append("Quantity: ").append(item.getProductQuantity()).append("\n");
-            emailContent.append("Total Price: $").append(item.getTotalProductPrice()).append("\n");
-            emailContent.append("Thank you for your visit\n");
+    public ResponseEntity<ApiResponseDto<?>> cancelOrder(int orderId) {
+        try {
+            Order order = this.orderRepo.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
+            order.setOrderStatus(OrderStatus.CANCELLED.name());
+            orderRepo.save(order);
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                    new ApiResponseDto<>(ApiResponseStatus.SUCCESS.name(), "Order has been successfully cancelled!")
+            );
+        }catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                    new ApiResponseDto<>(ApiResponseStatus.FAILED.name(), "Failed to cancel order: Please try again later!")
+            );
         }
-
-        mailMessage.setText(emailContent.toString());
-
-        // Send the email
-        javaMailSender.send(mailMessage);
     }
+
+    private OrderResponseDto orderToOrderResponseDto(Order order) {
+        List<OrderItem> orderItems = orderItemRepository.findByOrder(order);
+        List<OrderItemResponseDto> orderItemResponseDtos = new ArrayList<>();
+        for(OrderItem orderItem: orderItems) {
+            orderItemResponseDtos.add(orderItemToOrderItemResponseDto(orderItem));
+        }
+        return new OrderResponseDto(
+                order.getOrderId(),
+                order.getPlacedOn(),
+                order.getOrderStatus(),
+                order.getPaymentStatus(),
+                order.getAddressLine1(),
+                order.getAddressLine2(),
+                order.getCity(),
+                order.getDistrict(),
+                order.getPhoneNo(),
+                order.getOrderAmt(),
+                orderItemResponseDtos
+        );
+    }
+
+    private OrderItemResponseDto orderItemToOrderItemResponseDto(OrderItem orderItem) {
+        Products product = productRepository.findById(orderItem.getProduct()).orElseThrow(ProductNotFoundException::new);
+        return new OrderItemResponseDto(
+                orderItem.getOrderItemId(),
+                product.getProduct_id(),
+                product.getProductName(),
+                product.getPrice(),
+                product.getImageUrl(),
+                orderItem.getTotalProductPrice(),
+                orderItem.getProductQuantity()
+        );
+    }
+
 }

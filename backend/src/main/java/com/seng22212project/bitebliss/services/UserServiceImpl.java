@@ -1,18 +1,17 @@
 package com.seng22212project.bitebliss.services;
 
-import com.seng22212project.bitebliss.dtos.ApiResponseDto;
-import com.seng22212project.bitebliss.dtos.ApiResponseStatus;
-import com.seng22212project.bitebliss.dtos.ResetPasswordDto;
-import com.seng22212project.bitebliss.dtos.SignUpRequestDto;
-import com.seng22212project.bitebliss.exceptions.UserAlreadyExistsException;
-import com.seng22212project.bitebliss.exceptions.UserNotFoundException;
-import com.seng22212project.bitebliss.exceptions.UserServiceLogicException;
-import com.seng22212project.bitebliss.exceptions.UserVerificationFailedException;
+import com.seng22212project.bitebliss.dtos.requests.ResetPasswordRequestDto;
+import com.seng22212project.bitebliss.dtos.requests.SignUpRequestDto;
+import com.seng22212project.bitebliss.dtos.responses.ApiResponseDto;
+import com.seng22212project.bitebliss.enums.ApiResponseStatus;
+import com.seng22212project.bitebliss.exceptions.*;
 import com.seng22212project.bitebliss.factories.RoleFactory;
-import com.seng22212project.bitebliss.models.Role;
-import com.seng22212project.bitebliss.models.User;
+import com.seng22212project.bitebliss.models.*;
+import com.seng22212project.bitebliss.repositories.OrderItemRepository;
+import com.seng22212project.bitebliss.repositories.OrderRepository;
+import com.seng22212project.bitebliss.repositories.ProductRepository;
 import com.seng22212project.bitebliss.repositories.UserRepository;
-import jakarta.mail.MessagingException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -20,12 +19,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import java.io.UnsupportedEncodingException;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Component
+@Slf4j
 public class UserServiceImpl implements UserService{
 
     @Autowired
@@ -39,6 +36,15 @@ public class UserServiceImpl implements UserService{
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private ProductRepository productRepository;
+
+    @Autowired
+    private OrderItemRepository orderItemRepository;
 
     @Value("${app.verificationCodeExpirationMs}")
     private long EXPIRY_PERIOD;
@@ -63,6 +69,7 @@ public class UserServiceImpl implements UserService{
             ));
 
         }catch(Exception e) {
+            log.error("Registration failed: {}", e.getMessage());
             throw new UserServiceLogicException("Registration failed: Something went wrong!");
         }
 
@@ -94,7 +101,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public ResponseEntity<ApiResponseDto<?>> resendVerificationCode(String email) throws MessagingException, UnsupportedEncodingException, UserNotFoundException, UserServiceLogicException {
+    public ResponseEntity<ApiResponseDto<?>> resendVerificationCode(String email) throws UserNotFoundException, UserServiceLogicException {
 
         User user = findByEmail(email);
 
@@ -110,6 +117,7 @@ public class UserServiceImpl implements UserService{
                     ApiResponseStatus.SUCCESS.name(), "Verification email has been resent successfully!")
             );
         }catch(Exception e) {
+            log.error("Registration verification failed: {}", e.getMessage());
             throw new UserServiceLogicException("Registration failed: Something went wrong!");
         }
 
@@ -130,6 +138,7 @@ public class UserServiceImpl implements UserService{
                         "Verification successful: Email sent successfully!"
                 ));
             } catch (Exception e) {
+                log.error("Reset password email verification failed: {}", e.getMessage());
                 throw new UserServiceLogicException("Verification failed: Something went wrong!");
             }
         }
@@ -163,15 +172,26 @@ public class UserServiceImpl implements UserService{
                     ApiResponseStatus.SUCCESS.name(), "Verification successful: User account has been verified!"
             ));
         }catch(Exception e) {
+            log.error("Reset password verification failed: {}", e.getMessage());
             throw new UserServiceLogicException("Verification failed: Something went wrong!" + e.getMessage());
         }
     }
 
     @Override
-    public ResponseEntity<ApiResponseDto<?>> resetPassword(ResetPasswordDto resetPasswordDto) throws UserNotFoundException, UserServiceLogicException {
+    public ResponseEntity<ApiResponseDto<?>> resetPassword(ResetPasswordRequestDto resetPasswordDto) throws UserNotFoundException, UserServiceLogicException {
         if (existsByEmail(resetPasswordDto.getEmail())) {
             try {
                 User user = findByEmail(resetPasswordDto.getEmail());
+
+                if (resetPasswordDto.getCurrentPassword() != null) {
+                    if (!passwordEncoder.matches(resetPasswordDto.getCurrentPassword(), user.getPassword())) {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiResponseDto<>(
+                                ApiResponseStatus.FAILED.name(),
+                                "Reset password not successful: current password is incorrect!!"
+                        ));
+                    }
+                }
+
                 user.setPassword(passwordEncoder.encode(resetPasswordDto.getNewPassword()));
 
                 userRepository.save(user);
@@ -181,12 +201,15 @@ public class UserServiceImpl implements UserService{
                         "Reset successful: Password has been successfully reset!"
                 ));
             }catch(Exception e) {
+                log.error("Resetting password failed: {}", e.getMessage());
                 throw  new UserServiceLogicException("Reset failed: Password cannot be reset!");
             }
         }
 
         throw new UserNotFoundException("User not found with email " + resetPasswordDto.getEmail());
     }
+
+
 
     @Override
     public boolean existsByUsername(String username) {
@@ -237,4 +260,5 @@ public class UserServiceImpl implements UserService{
                 determineRoles(signUpRequestDto.getRoles())
         );
     }
+
 }

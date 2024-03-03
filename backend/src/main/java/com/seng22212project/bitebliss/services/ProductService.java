@@ -1,14 +1,14 @@
 package com.seng22212project.bitebliss.services;
 
-import com.example.demo.dtos.ProductDto;
-import com.example.demo.models.Products;
+import com.seng22212project.bitebliss.dtos.responses.ProductDto;
+import com.seng22212project.bitebliss.models.Products;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public interface ProductService {
-    public ProductDto create(ProductDto products,int cid);
+    public ProductDto create(ProductDto products, int cid);
 
    public List<ProductDto> viewAllProducts();
 

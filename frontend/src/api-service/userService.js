@@ -14,9 +14,24 @@ const resetPassword = async (email, currentPassword, newPassword) => {
     })
 
 }
+const getOrders = async (email) => {
+    console.log(AuthService.authHeader())
+
+    return await axios.get(
+        API_BASE_URL + '/user/orders', 
+        {
+            headers: AuthService.authHeader(),
+            params: {
+                email: email
+            }
+        }
+    )
+
+}
 
 const UserService = {
-    resetPassword
+    resetPassword,
+    getOrders
 }
 
 export default UserService;

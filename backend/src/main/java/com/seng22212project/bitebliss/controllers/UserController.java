@@ -1,7 +1,7 @@
 package com.seng22212project.bitebliss.controllers;
 
-import com.seng22212project.bitebliss.dtos.ApiResponseDto;
-import com.seng22212project.bitebliss.dtos.ResetPasswordRequestDto;
+import com.seng22212project.bitebliss.dtos.responses.ApiResponseDto;
+import com.seng22212project.bitebliss.dtos.requests.ResetPasswordRequestDto;
 import com.seng22212project.bitebliss.exceptions.UserNotFoundException;
 import com.seng22212project.bitebliss.exceptions.UserServiceLogicException;
 import com.seng22212project.bitebliss.services.OrderServices;
@@ -24,17 +24,17 @@ public class UserController {
     @Autowired
     private OrderServices orderService;
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/changePassword")
     public ResponseEntity<ApiResponseDto<?>> changePassword(@RequestBody @Valid ResetPasswordRequestDto resetPasswordRequestDto)
             throws UserNotFoundException, UserServiceLogicException {
         return userService.resetPassword(resetPasswordRequestDto);
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/orders")
     public ResponseEntity<ApiResponseDto<?>> getOrdersByUser(@Param("email") String email)
             throws UserNotFoundException, UserServiceLogicException {
         return orderService.getOrders(email);
     }
-
-
 }

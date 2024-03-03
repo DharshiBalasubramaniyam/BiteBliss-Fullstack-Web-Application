@@ -13,6 +13,13 @@ function Login() {
     const [response_error, setResponseError] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
+    useEffect(()=> {
+        const user = AuthService.getCurrentUser();
+        if (user && user.token) {
+            navigate("/");
+        }
+    }, [])
+
     const onSubmit = async (data) => {
         setIsLoading(true)        
         const response = await AuthService.login_req(data.email, data.password).then(

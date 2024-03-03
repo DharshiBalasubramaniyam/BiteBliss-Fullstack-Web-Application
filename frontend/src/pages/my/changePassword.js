@@ -48,7 +48,7 @@ function ChangePassword() {
         <>
             <UserHeader />
             <div className='user'>
-                <h1>Hello John!</h1>
+                <h1>Hello {AuthService.getCurrentUser().username}!</h1>
                 <h2>Change password</h2>
                 <form onSubmit={handleSubmit(onSubmit)}>
                     {responseError ? <p className="error">{responseError}</p> : <></>}
