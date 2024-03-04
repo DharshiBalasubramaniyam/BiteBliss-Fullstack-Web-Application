@@ -7,7 +7,7 @@ Main features:
 - Product categories
 - Cart management
 - Place orders
-- Checkout(Cash at payment only)
+- Checkout(Cash on delivery only)
 - User profile, view order history
   
 Technologies: Spring boot | React js | JWT | MySQL | CSS
